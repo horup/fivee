@@ -1,5 +1,5 @@
 [package]
-name = "fivee"
+name = "system_startup"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,5 +7,5 @@ edition = "2021"
 
 [dependencies]
 bevy = { workspace = true }
-common = { path = "../common" }
-system_startup = { path = "../system_startup"}
+mapgen = { workspace = true }
+rand = { workspace = true }

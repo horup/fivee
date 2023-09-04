@@ -1,14 +1,15 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+mod token;
+pub use token::*;
+mod grid_cell;
+pub use grid_cell::*;
+mod grid;
+pub use grid::*;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+use bevy::prelude::*;
+pub struct CommonPlugin;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+impl Plugin for CommonPlugin {
+    fn build(&self, app: &mut App) {
+        app.insert_resource(Grid::new(0));
     }
 }
