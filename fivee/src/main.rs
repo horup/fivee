@@ -5,6 +5,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugins(common::CommonPlugin)
         .add_systems(Startup, system_startup::system_startup)
+        .add_systems(Update, system_ui::system_ui)
         .run();
 }
 

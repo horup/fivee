@@ -1,5 +1,6 @@
 [workspace]
-members = ['fivee', 'common', 'system_startup']
+members = ['fivee', 'common', 'system_startup', 'system_ui']
+resolver = "2"
 
 [profile.dev]
 opt-level = 1
