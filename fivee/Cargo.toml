@@ -8,5 +8,5 @@ edition = "2021"
 [dependencies]
 bevy = { workspace = true }
 common = { path = "../common" }
-system_startup = { path = "../system_startup"}
+plugin_game = { path = "../plugin_game"}
 plugin_ui ={ path = "../plugin_ui" }

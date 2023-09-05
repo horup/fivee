@@ -5,7 +5,7 @@ use common::Grid;
 use mapgen::{AreaStartingPosition, BspRooms, MapBuilder, SimpleRooms, XStart, YStart};
 use rand::{rngs::StdRng, SeedableRng};
 
-pub fn system_startup(
+fn system_startup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
@@ -56,7 +56,6 @@ pub fn system_startup(
     }
 
     // spawn camera
-    // camera
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(0.0,0.0,32.0).looking_at(Vec3::new(0.0, 16.0, 0.0), Vec3::Y),
         ..default()
@@ -84,4 +83,12 @@ pub fn system_startup(
         transform: Transform::from_xyz(4.0, 8.0, 4.0),
         ..default()
     });*/
+}
+
+
+pub struct PluginGame;
+impl Plugin for PluginGame {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Startup, system_startup);
+    }
 }

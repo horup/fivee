@@ -6,7 +6,7 @@ fn main() {
         .add_plugins(FrameTimeDiagnosticsPlugin)
         .add_plugins(common::CommonPlugin)
         .add_plugins(plugin_ui::PluginUI)
-        .add_systems(Startup, system_startup::system_startup)
+        .add_plugins(plugin_game::PluginGame)
         .run();
 }
 
