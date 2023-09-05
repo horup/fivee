@@ -23,6 +23,15 @@ fn system_startup(
         ..default()
     }); 
 
+    let material_black = materials.add(StandardMaterial {
+        base_color:Color::BLACK,
+        unlit:true,
+        ..Default::default()
+    });
+
+    let mesh_plane = meshes.add(shape::Plane::from_size(1.0).into());
+    let mesh_cube = meshes.add(Mesh::from(shape::Cube { size: 1.0 }));
+
     let mut rng: StdRng = SeedableRng::seed_from_u64(0);
     let map_size = 64;
     let mapbuffer = MapBuilder::new(map_size, map_size)
@@ -41,17 +50,22 @@ fn system_startup(
             let y = y as f32 + 0.5;
             if blocked == true {
                 commands.spawn(PbrBundle {
-                    mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
+                    mesh: mesh_cube.clone(),
                     material: material_brick.clone(),
                     transform: Transform::from_xyz(x, y, 0.5),
                     ..default()
+                });
+                commands.spawn(PbrBundle {
+                    transform: Transform::from_xyz(x, y, 1.001).with_rotation(Quat::from_rotation_x(PI  / 2.0)),
+                    mesh: mesh_plane.clone(),
+                    material: material_black.clone(),
+                    ..Default::default()
                 });
             } 
             if walkable {
                 commands.spawn(PbrBundle {
                     transform: Transform::from_xyz(x, y, 0.0).with_rotation(Quat::from_rotation_x(PI  / 2.0)),
-                    mesh: meshes.add(shape::Plane::from_size(1.0).into()),
-                    
+                    mesh: mesh_plane.clone(),
                     material: material_cell.clone(),
                     ..Default::default()
                 });
