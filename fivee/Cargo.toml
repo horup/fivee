@@ -9,4 +9,4 @@ edition = "2021"
 bevy = { workspace = true }
 common = { path = "../common" }
 system_startup = { path = "../system_startup"}
-system_ui ={ path = "../system_ui" }
+plugin_ui ={ path = "../plugin_ui" }

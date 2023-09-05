@@ -62,8 +62,8 @@ fn update_debug(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, 
     }
 }
 
-pub struct SystemUI;
-impl Plugin for SystemUI {
+pub struct PluginUI;
+impl Plugin for PluginUI {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, system_ui_startup);
         app.add_systems(Update, (update_camera, update_debug));

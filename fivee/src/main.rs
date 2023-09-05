@@ -5,7 +5,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugins(FrameTimeDiagnosticsPlugin)
         .add_plugins(common::CommonPlugin)
-        .add_plugins(system_ui::SystemUI)
+        .add_plugins(plugin_ui::PluginUI)
         .add_systems(Startup, system_startup::system_startup)
         .run();
 }

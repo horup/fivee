@@ -1,5 +1,5 @@
 [workspace]
-members = ['fivee', 'common', 'system_startup', 'system_ui']
+members = ['fivee', 'common', 'system_startup', 'plugin_ui']
 resolver = "2"
 
 [profile.dev]
