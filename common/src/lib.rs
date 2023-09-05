@@ -4,6 +4,8 @@ mod grid_cell;
 pub use grid_cell::*;
 mod grid;
 pub use grid::*;
+mod ui;
+pub use ui::*;
 
 use bevy::prelude::*;
 pub struct CommonPlugin;

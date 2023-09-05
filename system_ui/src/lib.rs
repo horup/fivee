@@ -1,7 +1,27 @@
-use bevy::{prelude::*, input::mouse::MouseWheel};
+use bevy::{prelude::*, input::mouse::MouseWheel, diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin}};
+use common::UIDebugFPS;
+fn system_ui_startup(mut commands:Commands, asset_server: Res<AssetServer>) {
+    let font = asset_server.load("fonts/helvetica.ttf");
+    commands.spawn(
+        TextBundle::from_section(
+            "---",
+            TextStyle {
+                font: font.clone(),
+                font_size: 16.0,
+                color: Color::RED,
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            top: Val::Px(5.0),
+            left: Val::Px(5.0),
+            ..default()
+        }),
+    ).insert(UIDebugFPS);
+}
 
-pub fn system_ui(keys: Res<Input<KeyCode>>, mut camera:Query<(&mut Camera, &mut Transform)>, time:Res<Time>, mut mouse_wheel:EventReader<MouseWheel>) {
-    let (mut camera, mut transform) = camera.single_mut();
+fn update_camera(keys: Res<Input<KeyCode>>, mut camera:Query<(&mut Camera3d, &mut Transform, )>, time:Res<Time>, mut mouse_wheel:EventReader<MouseWheel>) {
+    let (_camera, mut transform) = camera.single_mut();
     let mut v = Vec2::new(0.0, 0.0);
     if keys.pressed(KeyCode::A) {
         v.x -= 1.0;
@@ -32,6 +52,20 @@ pub fn system_ui(keys: Res<Input<KeyCode>>, mut camera:Query<(&mut Camera, &mut 
     if transform.translation.z < 5.0 {
         transform.translation.z = min_z;
     }
-    
+}
 
+fn update_debug(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, With<UIDebugFPS>>) {
+    for mut text in &mut query {
+        if let Some(fps_diagnostics) = diagnostics.get(FrameTimeDiagnosticsPlugin::FPS) {
+            text.sections[0].value = format!("{}", fps_diagnostics.smoothed().unwrap_or_default() as i32);
+        }
+    }
+}
+
+pub struct SystemUI;
+impl Plugin for SystemUI {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Startup, system_ui_startup);
+        app.add_systems(Update, (update_camera, update_debug));
+    }
 }

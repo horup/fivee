@@ -1,11 +1,12 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, diagnostic::FrameTimeDiagnosticsPlugin};
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .add_plugins(FrameTimeDiagnosticsPlugin)
         .add_plugins(common::CommonPlugin)
+        .add_plugins(system_ui::SystemUI)
         .add_systems(Startup, system_startup::system_startup)
-        .add_systems(Update, system_ui::system_ui)
         .run();
 }
 
