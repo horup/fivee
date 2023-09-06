@@ -1,4 +1,4 @@
-use bevy::{prelude::*, diagnostic::FrameTimeDiagnosticsPlugin};
+use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
 
 fn main() {
     App::new()

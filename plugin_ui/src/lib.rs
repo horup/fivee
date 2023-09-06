@@ -1,5 +1,5 @@
 use bevy::{prelude::*, input::mouse::MouseWheel, diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin}};
-use common::UIDebugFPS;
+use common::{UIDebugFPS, WorldCursor};
 fn system_ui_startup(mut commands:Commands, asset_server: Res<AssetServer>) {
     // spawn camera
     commands.spawn(Camera3dBundle {
@@ -68,10 +68,28 @@ fn update_debug(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, 
     }
 }
 
+fn update_world_cursor(mut cursor_moved_events: EventReader<CursorMoved>, mut query_camera: Query<(&GlobalTransform, &Camera)>, mut world_cursor:ResMut<WorldCursor>) {
+    let (global_transform_camera, camera) = query_camera.single();
+    for e in cursor_moved_events.iter() {
+        let pos = e.position;
+        let ray = camera.viewport_to_world(global_transform_camera, pos);
+        if let Some(ray) = ray {
+            let n = Vec3::new(0.0, 0.0, 1.0);
+            let denom = n.dot(ray.direction);
+            if denom.abs() > 0.001 {
+                let t = -ray.origin.dot(n) / denom;
+                let p = ray.direction * t + ray.origin;
+                world_cursor.pos = p;
+                world_cursor.grid_pos = p.truncate().as_ivec2();
+            }
+        }
+    }
+}
+
 pub struct PluginUI;
 impl Plugin for PluginUI {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, system_ui_startup);
-        app.add_systems(Update, (update_camera, update_debug));
+        app.add_systems(Update, (update_camera, update_debug, update_world_cursor));
     }
 }
