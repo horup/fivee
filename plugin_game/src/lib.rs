@@ -67,8 +67,8 @@ fn system_startup(mut commands: Commands, sa:Res<CommonAssets>) {
 fn token_spawned(mut commands:Commands, mut q:Query<(Entity, &Token), Added<Token>>, sa:Res<CommonAssets>, mut materials:ResMut<Assets<StandardMaterial>>) {
     for (e, token) in q.iter() {
         commands.entity(e).insert(PbrBundle {
-            transform:Transform::from_translation(token.pos() + Vec3::new(0.0, 0.0, 0.5)).with_scale(Vec3::splat(0.8)),
-            mesh:sa.mesh("cube"),
+            transform:Transform::from_translation(token.pos() + Vec3::new(0.0, 0.0, 0.1)).with_rotation(Quat::from_rotation_x(PI / 2.0)),
+            mesh:sa.mesh("token"),
             material:materials.add(StandardMaterial {
                 base_color:token.color.clone(),
                 ..Default::default()

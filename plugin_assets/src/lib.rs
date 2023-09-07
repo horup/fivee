@@ -44,4 +44,5 @@ fn startup(
     // Meshes
     ca.mesh_insert("tile", meshes.add(shape::Plane::from_size(1.0).into()));
     ca.mesh_insert("cube", meshes.add(Mesh::from(shape::Cube { size: 1.0 })));
+    ca.mesh_insert("token", meshes.add(Mesh::from(shape::Cylinder { height:0.1, radius:0.5, ..Default::default() })));
 }
