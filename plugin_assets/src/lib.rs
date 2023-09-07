@@ -19,30 +19,47 @@ fn startup(
     let font = asset_server.load("fonts/helvetica.ttf");
     ca.font_insert("default", font);
 
-
     // Textures
     ca.image_insert("cell", asset_server.load("images/cell.png"));
     ca.image_insert("brick", asset_server.load("images/brick.png"));
 
     // Materials
     let tex = ca.image("cell");
-    ca.material_insert("cell", materials.add(StandardMaterial {
-        base_color_texture: Some(tex),
-        ..default()
-    })); 
+    ca.material_insert(
+        "cell",
+        materials.add(StandardMaterial {
+            base_color_texture: Some(tex),
+            ..default()
+        }),
+    );
     let tex = ca.image("brick");
-    ca.material_insert("brick", materials.add(StandardMaterial {
-        base_color_texture: Some(tex),
-        ..default()
-    })); 
-    ca.material_insert("black", materials.add(StandardMaterial {
-        base_color:Color::BLACK,
-        unlit:true,
-        ..Default::default()
-    })); 
+    ca.material_insert(
+        "brick",
+        materials.add(StandardMaterial {
+            base_color_texture: Some(tex),
+            ..default()
+        }),
+    );
+    ca.material_insert(
+        "black",
+        materials.add(StandardMaterial {
+            base_color: Color::BLACK,
+            unlit: true,
+            ..Default::default()
+        }),
+    );
 
     // Meshes
     ca.mesh_insert("tile", meshes.add(shape::Plane::from_size(1.0).into()));
     ca.mesh_insert("cube", meshes.add(Mesh::from(shape::Cube { size: 1.0 })));
-    ca.mesh_insert("token", meshes.add(Mesh::from(shape::Cylinder { height:0.1, radius:0.5, ..Default::default() })));
+    ca.mesh_insert(
+        "token",
+        meshes.add(Mesh::from(shape::Cylinder {
+            height: 1.0,
+            radius: 0.5,
+            resolution: 32,
+            segments: 1,
+            ..Default::default()
+        })),
+    );
 }

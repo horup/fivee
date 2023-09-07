@@ -57,17 +57,22 @@ fn system_startup(mut commands: Commands, sa:Res<CommonAssets>) {
 
     // spawn player
     let p = mapbuffer.starting_point.expect("no starting point found");
+    commands.spawn(Token {
+        color: Color::BLUE,
+        grid_pos: IVec2 { x: p.x as i32, y: p.y as i32 },
+    });
 
+    // spawn a goblin
     commands.spawn(Token {
         color: Color::RED,
-        grid_pos: IVec2 { x: p.x as i32, y: p.y as i32 },
+        grid_pos: IVec2 { x: p.x as i32 + 2, y: p.y as i32 + 2 },
     });
 }
 
 fn token_spawned(mut commands:Commands, mut q:Query<(Entity, &Token), Added<Token>>, sa:Res<CommonAssets>, mut materials:ResMut<Assets<StandardMaterial>>) {
     for (e, token) in q.iter() {
         commands.entity(e).insert(PbrBundle {
-            transform:Transform::from_translation(token.pos() + Vec3::new(0.0, 0.0, 0.1)).with_rotation(Quat::from_rotation_x(PI / 2.0)),
+            transform:Transform::from_translation(token.pos() + Vec3::new(0.0, 0.0, 0.5)).with_rotation(Quat::from_rotation_x(PI / 2.0)),
             mesh:sa.mesh("token"),
             material:materials.add(StandardMaterial {
                 base_color:token.color.clone(),
