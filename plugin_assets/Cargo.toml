@@ -1,5 +1,5 @@
 [package]
-name = "fivee"
+name = "plugin_assets"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,7 +7,4 @@ edition = "2021"
 
 [dependencies]
 bevy = { workspace = true }
-common = { path = "../common" }
-plugin_game = { path = "../plugin_game" }
-plugin_ui = { path = "../plugin_ui" }
-plugin_assets = { path = "../plugin_assets" }
+common = { path = "../common"}

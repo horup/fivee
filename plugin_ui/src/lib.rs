@@ -1,13 +1,13 @@
 use bevy::{prelude::*, input::mouse::MouseWheel, diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin}};
-use common::{UIDebugFPS, WorldCursor};
-fn system_ui_startup(mut commands:Commands, asset_server: Res<AssetServer>) {
+use common::{UIDebugFPS, WorldCursor, CommonAssets};
+fn system_ui_startup(mut commands:Commands, common_assets:ResMut<CommonAssets>) {
     // spawn camera
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(0.0,0.0,32.0).looking_at(Vec3::new(0.0, 16.0, 0.0), Vec3::Y),
         ..default()
     });
 
-    let font = asset_server.load("fonts/helvetica.ttf");
+    let font = common_assets.font("default");
     commands.spawn(
         TextBundle::from_section(
             "---",

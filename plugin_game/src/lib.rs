@@ -1,37 +1,11 @@
 use std::f32::consts::PI;
 
 use bevy::prelude::*;
-use common::Grid;
+use common::{Grid, CommonAssets};
 use mapgen::{AreaStartingPosition, BspRooms, MapBuilder, SimpleRooms, XStart, YStart};
 use rand::{rngs::StdRng, SeedableRng};
 
-fn system_startup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    asset_server: Res<AssetServer>,
-) {
-    let texture = asset_server.load("textures/cell.png");
-    let material_cell = materials.add(StandardMaterial {
-        base_color_texture: Some(texture.clone()),
-        ..default()
-    }); 
-
-    let texture = asset_server.load("textures/brick.png");
-    let material_brick = materials.add(StandardMaterial {
-        base_color_texture: Some(texture.clone()),
-        ..default()
-    }); 
-
-    let material_black = materials.add(StandardMaterial {
-        base_color:Color::BLACK,
-        unlit:true,
-        ..Default::default()
-    });
-
-    let mesh_plane = meshes.add(shape::Plane::from_size(1.0).into());
-    let mesh_cube = meshes.add(Mesh::from(shape::Cube { size: 1.0 }));
-
+fn system_startup(mut commands: Commands, sa:Res<CommonAssets>) {
     let mut rng: StdRng = SeedableRng::seed_from_u64(0);
     let map_size = 64;
     let mapbuffer = MapBuilder::new(map_size, map_size)
@@ -50,23 +24,25 @@ fn system_startup(
             let y = y as f32 + 0.5;
             if blocked == true {
                 commands.spawn(PbrBundle {
-                    mesh: mesh_cube.clone(),
-                    material: material_brick.clone(),
+                    mesh: sa.mesh("cube"),
+                    material: sa.material("brick"),
                     transform: Transform::from_xyz(x, y, 0.5),
                     ..default()
                 });
                 commands.spawn(PbrBundle {
-                    transform: Transform::from_xyz(x, y, 1.001).with_rotation(Quat::from_rotation_x(PI  / 2.0)),
-                    mesh: mesh_plane.clone(),
-                    material: material_black.clone(),
+                    transform: Transform::from_xyz(x, y, 1.001)
+                        .with_rotation(Quat::from_rotation_x(PI / 2.0)),
+                    mesh: sa.mesh("tile"),
+                    material: sa.material("black"),
                     ..Default::default()
                 });
-            } 
+            }
             if walkable {
                 commands.spawn(PbrBundle {
-                    transform: Transform::from_xyz(x, y, 0.0).with_rotation(Quat::from_rotation_x(PI  / 2.0)),
-                    mesh: mesh_plane.clone(),
-                    material: material_cell.clone(),
+                    transform: Transform::from_xyz(x, y, 0.0)
+                        .with_rotation(Quat::from_rotation_x(PI / 2.0)),
+                        mesh: sa.mesh("tile"),
+                        material: sa.material("cell"),
                     ..Default::default()
                 });
             }
@@ -74,12 +50,11 @@ fn system_startup(
     }
 
     // spawn lighting
-     commands.insert_resource(AmbientLight {
+    commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 1.0,
     });
 }
-
 
 pub struct PluginGame;
 impl Plugin for PluginGame {
