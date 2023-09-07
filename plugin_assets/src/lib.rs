@@ -21,8 +21,8 @@ fn startup(
 
 
     // Textures
-    ca.image_insert("cell", asset_server.load("textures/cell.png"));
-    ca.image_insert("brick", asset_server.load("textures/brick.png"));
+    ca.image_insert("cell", asset_server.load("images/cell.png"));
+    ca.image_insert("brick", asset_server.load("images/brick.png"));
 
     // Materials
     let tex = ca.image("cell");
