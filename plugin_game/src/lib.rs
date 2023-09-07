@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 
 use bevy::prelude::*;
-use common::{Grid, CommonAssets};
+use common::{Grid, CommonAssets, Token};
 use mapgen::{AreaStartingPosition, BspRooms, MapBuilder, SimpleRooms, XStart, YStart};
 use rand::{rngs::StdRng, SeedableRng};
 
@@ -54,11 +54,34 @@ fn system_startup(mut commands: Commands, sa:Res<CommonAssets>) {
         color: Color::WHITE,
         brightness: 1.0,
     });
+
+    // spawn player
+    let p = mapbuffer.starting_point.expect("no starting point found");
+
+    commands.spawn(Token {
+        color: Color::RED,
+        grid_pos: IVec2 { x: p.x as i32, y: p.y as i32 },
+    });
+}
+
+fn token_spawned(mut commands:Commands, mut q:Query<(Entity, &Token), Added<Token>>, sa:Res<CommonAssets>, mut materials:ResMut<Assets<StandardMaterial>>) {
+    for (e, token) in q.iter() {
+        commands.entity(e).insert(PbrBundle {
+            transform:Transform::from_translation(token.pos() + Vec3::new(0.0, 0.0, 0.5)).with_scale(Vec3::splat(0.8)),
+            mesh:sa.mesh("cube"),
+            material:materials.add(StandardMaterial {
+                base_color:token.color.clone(),
+                ..Default::default()
+            }),
+            ..Default::default()
+        });
+    }
 }
 
 pub struct PluginGame;
 impl Plugin for PluginGame {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, system_startup);
+        app.add_systems(PostUpdate, token_spawned);
     }
 }
