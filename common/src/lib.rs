@@ -10,6 +10,8 @@ mod world_cursor;
 pub use world_cursor::*;
 mod assets;
 pub use assets::*;
+mod round;
+pub use round::*;
 
 use bevy::prelude::*;
 pub struct CommonPlugin;
@@ -19,5 +21,6 @@ impl Plugin for CommonPlugin {
         app.insert_resource(Grid::new(0));
         app.insert_resource(WorldCursor::default());
         app.insert_resource(CommonAssets::default());
+        app.insert_resource(Round::default());
     }
 }
