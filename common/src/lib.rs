@@ -12,6 +12,7 @@ mod assets;
 pub use assets::*;
 mod round;
 pub use round::*;
+pub mod math;
 
 use bevy::prelude::*;
 pub struct CommonPlugin;

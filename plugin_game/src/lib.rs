@@ -85,14 +85,6 @@ fn spawned_token(mut commands:Commands, q:Query<(Entity, &Token), Added<Token>>,
     }
 }
 
-fn smootherstep(edge0: f32, edge1: f32, x: f32) -> f32
-{
-    // Scale and clamp x to 0..1 range
-    let x = ((x - edge0) / (edge1 - edge0)).clamp(0.0, 1.0);
-    // Evaluate polynomial
-    x * x * x * (x * (x * 6.0 - 15.0) + 10.0)
-}
-
 fn update_round_command(command:&mut RoundCommand, round:&mut ResMut<Round>, time:&Res<Time>, tokens:&mut Query<&mut Token>, transforms:&mut Query<&mut Transform>) {
     match command.variant {
         common::Variant::Nop => {},
@@ -103,7 +95,7 @@ fn update_round_command(command:&mut RoundCommand, round:&mut ResMut<Round>, tim
                     let s = Token::pos(token.grid_pos);
                     let e = Token::pos(to);
                     let v = e - s;
-                    let v = v * smootherstep(0.0, 1.0, a); 
+                    let v = v * common::math::smootherstep(0.0, 1.0, a); 
                     transform.translation = s + v;
                 }
             }
