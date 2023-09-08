@@ -122,6 +122,10 @@ fn update_world_cursor(
         }
     }
 
+    if round.executing() {
+        return;
+    }
+
     ui.grid_cursor = world_cursor.grid_pos;
     if mouse.just_pressed(MouseButton::Left) {
         if let Some(selected_entity) = ui.selected_entity {
@@ -157,7 +161,7 @@ fn update_world_cursor(
         ui.selected_entity = None;
     }
 
-    for (token_entity, token) in tokens.iter() {
+    for (token_entity, _) in tokens.iter() {
         for (selection_entity, _, parent) in selections.iter() {
             if parent.get() == token_entity {
                 if ui.selected_entity != Some(token_entity) {

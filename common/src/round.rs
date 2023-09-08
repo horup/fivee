@@ -73,4 +73,8 @@ impl Round {
     pub fn pop_front(&mut self) -> Option<RoundCommand> {
         self.commands.pop_front()
     }
+
+    pub fn executing(&self) -> bool {
+        self.commands.len() > 0
+    }
 }
