@@ -1,12 +1,9 @@
-use bevy::{
-    prelude::*,
-};
+use bevy::prelude::*;
 use common::{CommonAssets, UIDebugFPS, WorldCursor};
 pub fn system_ui_startup(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
     // spawn camera
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(5.0, 0.0, 8.0)
-            .looking_at(Vec3::new(5.0, 8.0, 0.0), Vec3::Y),
+        transform: Transform::from_xyz(5.0, 0.0, 8.0).looking_at(Vec3::new(5.0, 8.0, 0.0), Vec3::Y),
         ..default()
     });
 
