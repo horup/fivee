@@ -75,3 +75,20 @@ pub fn get_reachable_cells(f: &Facade, entity: EntityId) -> HashMap<IVec2, Reach
     vec
 }
 */
+
+use bevy::{prelude::*, utils::HashMap};
+
+
+#[derive(Clone, Copy)]
+pub struct ReachableCell {
+    pub to: IVec2,
+    pub cost_ft: i16,
+    pub from :IVec2
+}
+
+
+pub fn get_reachable_cells(token:Entity) -> HashMap<IVec2, ReachableCell> {
+    let mut map = HashMap::new();
+    
+    map
+}
