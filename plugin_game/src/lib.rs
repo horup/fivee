@@ -1,9 +1,9 @@
-use std::f32::consts::PI;
+
 
 use bevy::prelude::*;
-use common::{Grid, CommonAssets, Token, Round, RoundCommand};
-use mapgen::{AreaStartingPosition, BspRooms, MapBuilder, SimpleRooms, XStart, YStart};
-use rand::{rngs::StdRng, SeedableRng};
+use common::{CommonAssets, Token, Round, RoundCommand};
+
+
 
 mod startup;
 pub use startup::*;
@@ -23,7 +23,7 @@ fn spawned_token(mut commands:Commands, q:Query<(Entity, &Token), Added<Token>>,
     }
 }
 
-fn update_round_command(command:&mut RoundCommand, round:&mut ResMut<Round>, time:&Res<Time>, tokens:&mut Query<&mut Token>, transforms:&mut Query<&mut Transform>) {
+fn update_round_command(command:&mut RoundCommand, _round:&mut ResMut<Round>, _time:&Res<Time>, tokens:&mut Query<&mut Token>, transforms:&mut Query<&mut Transform>) {
     match command.variant {
         common::Variant::Nop => {},
         common::Variant::MoveTo { who, to } => {
@@ -41,7 +41,7 @@ fn update_round_command(command:&mut RoundCommand, round:&mut ResMut<Round>, tim
     }
 }
 
-fn finish_round_command(command:RoundCommand, round:&mut ResMut<Round>, time:&Res<Time>, tokens:&mut Query<&mut Token>, transforms:&mut Query<&mut Transform>) {
+fn finish_round_command(command:RoundCommand, _round:&mut ResMut<Round>, _time:&Res<Time>, tokens:&mut Query<&mut Token>, transforms:&mut Query<&mut Transform>) {
     match command.variant {
         common::Variant::Nop => {},
         common::Variant::MoveTo { who, to } => {
@@ -74,6 +74,6 @@ impl Plugin for PluginGame {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, startup);
         app.add_systems(Update, update_round);
-        app.add_systems(PostUpdate, (spawned_token));
+        app.add_systems(PostUpdate, spawned_token);
     }
 }

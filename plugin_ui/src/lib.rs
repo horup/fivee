@@ -96,7 +96,7 @@ fn update_world_cursor(
     ui.grid_cursor = world_cursor.grid_pos;
     if mouse.just_pressed(MouseButton::Left) {
         if let Some(selected_entity) = ui.selected_entity {
-            if let Ok(token) = tokens.get(selected_entity) {
+            if let Ok(_token) = tokens.get(selected_entity) {
                 round.push_back_command(RoundCommand::move_to(
                     selected_entity,
                     ui.grid_cursor.clone(),
