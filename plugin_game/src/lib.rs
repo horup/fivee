@@ -15,7 +15,7 @@ fn spawned_token(mut commands:Commands, q:Query<(Entity, &Token), Added<Token>>,
             transform:Transform::from_translation(Token::pos(token.grid_pos)),
             mesh:sa.mesh("token"),
             material:materials.add(StandardMaterial {
-                base_color:token.color.clone(),
+                base_color:token.color,
                 ..Default::default()
             }),
             ..Default::default()

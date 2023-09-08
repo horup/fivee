@@ -52,7 +52,7 @@ impl RoundCommand {
             return a;
         }
         
-        return a;
+        a
     }
 }
 
@@ -75,6 +75,6 @@ impl Round {
     }
 
     pub fn executing(&self) -> bool {
-        self.commands.len() > 0
+        !self.commands.is_empty()
     }
 }

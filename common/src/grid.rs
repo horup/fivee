@@ -27,7 +27,7 @@ impl Grid {
             return Some(cell);
         }
 
-        return None;
+        None
     }
 
     pub fn get(&self, i: IVec2) -> Option<&GridCell> {
@@ -35,7 +35,7 @@ impl Grid {
             return Some(cell);
         }
 
-        return None;
+        None
     }
 
     pub fn size(&self) -> usize {

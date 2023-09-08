@@ -99,7 +99,7 @@ fn update_world_cursor(
             if let Ok(_token) = tokens.get(selected_entity) {
                 round.push_back_command(RoundCommand::move_to(
                     selected_entity,
-                    ui.grid_cursor.clone(),
+                    ui.grid_cursor,
                 ))
             } else {
                 ui.selected_entity = None;
@@ -109,7 +109,7 @@ fn update_world_cursor(
             let grid_pos = ui.grid_cursor;
             for (e, token) in tokens.iter() {
                 if token.grid_pos == grid_pos {
-                    ui.selected_entity = Some(e.clone());
+                    ui.selected_entity = Some(e);
                     let selected_e = commands
                         .spawn(PbrBundle {
                             mesh: ca.mesh("selector"),
@@ -130,10 +130,8 @@ fn update_world_cursor(
 
     for (token_entity, _) in tokens.iter() {
         for (selection_entity, _, parent) in selections.iter() {
-            if parent.get() == token_entity {
-                if ui.selected_entity != Some(token_entity) {
-                    commands.entity(selection_entity).despawn_recursive();
-                }
+            if parent.get() == token_entity && ui.selected_entity != Some(token_entity) {
+                commands.entity(selection_entity).despawn_recursive();
             }
         }
     }

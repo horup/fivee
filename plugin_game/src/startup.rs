@@ -26,7 +26,7 @@ pub fn startup(mut commands: Commands, sa:Res<CommonAssets>, mut round:ResMut<Ro
             let x = x as f32 + 0.5;
             let y = y as f32 + 0.5;
 
-            if blocked == true {
+            if blocked {
                 commands.spawn(PbrBundle {
                     mesh: sa.mesh("cube"),
                     material: sa.material("brick"),
