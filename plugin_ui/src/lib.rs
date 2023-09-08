@@ -76,7 +76,7 @@ fn update_debug(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, 
     }
 }
 
-fn update_world_cursor(mut cursor_moved_events: EventReader<CursorMoved>, mut query_camera: Query<(&GlobalTransform, &Camera)>, mut world_cursor:Query<(&mut WorldCursor, &mut Transform)>) {
+fn update_world_cursor(mut cursor_moved_events: EventReader<CursorMoved>, mut query_camera: Query<(&GlobalTransform, &Camera)>, mut world_cursor:Query<(&mut WorldCursor, &mut Transform)>, mouse:Res<Input<MouseButton>>) {
     let (global_transform_camera, camera) = query_camera.single();
     let (mut world_cursor, mut world_cursor_transform) = world_cursor.single_mut();
     for e in cursor_moved_events.iter() {
@@ -95,12 +95,18 @@ fn update_world_cursor(mut cursor_moved_events: EventReader<CursorMoved>, mut qu
             }
         }
     }
+
+    if mouse.just_pressed(MouseButton::Left) {
+        
+    }
 }
+
+
 
 pub struct PluginUI;
 impl Plugin for PluginUI {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, system_ui_startup);
-        app.add_systems(Update, (update_camera, update_debug, update_world_cursor));
+        app.add_systems(PreUpdate, (update_camera, update_debug, update_world_cursor));
     }
 }

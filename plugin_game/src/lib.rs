@@ -115,7 +115,6 @@ fn finish_round_command(command:RoundCommand, round:&mut ResMut<Round>, time:&Re
     }
 }
 
-
 fn update_round(mut round:ResMut<Round>, time:Res<Time>, mut tokens:Query<&mut Token>, mut transforms:Query<&mut Transform>) {
     if let Some(mut command) = round.pop_front() {
         command.timer_elapsed_sec += time.delta_seconds();
@@ -129,11 +128,12 @@ fn update_round(mut round:ResMut<Round>, time:Res<Time>, mut tokens:Query<&mut T
     }
 }
 
+
 pub struct PluginGame;
 impl Plugin for PluginGame {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, system_startup);
         app.add_systems(Update, update_round);
-        app.add_systems(PostUpdate, (spawned_token, update_round));
+        app.add_systems(PostUpdate, (spawned_token));
     }
 }
