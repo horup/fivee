@@ -14,6 +14,9 @@ mod round;
 pub use round::*;
 pub mod math;
 
+mod selected;
+pub use selected::*;
+
 use bevy::prelude::*;
 pub struct CommonPlugin;
 
@@ -22,5 +25,6 @@ impl Plugin for CommonPlugin {
         app.insert_resource(Grid::new(0));
         app.insert_resource(CommonAssets::default());
         app.insert_resource(Round::default());
+        app.insert_resource(UI::default());
     }
 }
