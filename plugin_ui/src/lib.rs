@@ -3,7 +3,7 @@ use bevy::{
     input::mouse::MouseWheel,
     prelude::*,
 };
-use common::{CommonAssets, Round, RoundCommand, UIDebugFPS, WorldCursor, UI};
+use common::{CommonAssets, Round, RoundCommand, Selection, Token, UIDebugFPS, WorldCursor, UI};
 fn system_ui_startup(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
     // spawn camera
     commands.spawn(Camera3dBundle {
@@ -91,12 +91,16 @@ fn update_debug(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, 
 }
 
 fn update_world_cursor(
+    mut commands: Commands,
     mut cursor_moved_events: EventReader<CursorMoved>,
     query_camera: Query<(&GlobalTransform, &Camera)>,
     mut world_cursor: Query<(&mut WorldCursor, &mut Transform)>,
     mouse: Res<Input<MouseButton>>,
     mut ui: ResMut<UI>,
     mut round: ResMut<Round>,
+    tokens: Query<(Entity, &Token)>,
+    selections: Query<(Entity, &Selection, &Parent)>,
+    ca: Res<CommonAssets>,
 ) {
     let (global_transform_camera, camera) = query_camera.single();
     let (mut world_cursor, mut world_cursor_transform) = world_cursor.single_mut();
@@ -119,13 +123,47 @@ fn update_world_cursor(
     }
 
     ui.grid_cursor = world_cursor.grid_pos;
-
     if mouse.just_pressed(MouseButton::Left) {
         if let Some(selected_entity) = ui.selected_entity {
-            round.push_back_command(RoundCommand::move_to(
-                selected_entity,
-                ui.grid_cursor.clone(),
-            ))
+            if let Ok(token) = tokens.get(selected_entity) {
+                round.push_back_command(RoundCommand::move_to(
+                    selected_entity,
+                    ui.grid_cursor.clone(),
+                ))
+            } else {
+                ui.selected_entity = None;
+            }
+        } else {
+            // no entity selected
+            let grid_pos = ui.grid_cursor;
+            for (e, token) in tokens.iter() {
+                if token.grid_pos == grid_pos {
+                    ui.selected_entity = Some(e.clone());
+                    let selected_e = commands
+                        .spawn(PbrBundle {
+                            mesh: ca.mesh("selector"),
+                            material: ca.material("white"),
+                            ..Default::default()
+                        })
+                        .insert(Selection::default())
+                        .id();
+                    commands.entity(e).add_child(selected_e);
+                }
+            }
+        }
+    }
+
+    if mouse.just_pressed(MouseButton::Right) {
+        ui.selected_entity = None;
+    }
+
+    for (token_entity, token) in tokens.iter() {
+        for (selection_entity, _, parent) in selections.iter() {
+            if parent.get() == token_entity {
+                if ui.selected_entity != Some(token_entity) {
+                    commands.entity(selection_entity).despawn_recursive();
+                }
+            }
         }
     }
 }

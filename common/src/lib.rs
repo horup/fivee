@@ -14,8 +14,8 @@ mod round;
 pub use round::*;
 pub mod math;
 
-mod selected;
-pub use selected::*;
+mod selection;
+pub use selection::*;
 
 use bevy::prelude::*;
 pub struct CommonPlugin;
