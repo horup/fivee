@@ -30,8 +30,30 @@ impl Grid {
         return None;
     }
 
+    pub fn get(&self, i: IVec2) -> Option<&GridCell> {
+        if let Some(cell) = self.cells.get(i.x as usize, i.y as usize) {
+            return Some(cell);
+        }
+
+        return None;
+    }
+
     pub fn size(&self) -> usize {
         self.size
+    }
+
+    pub fn is_walkable(&self, i: IVec2) -> bool {
+        if let Some(cell) = self.get(i) {
+            return cell.walkable;
+        }
+        false
+    }
+
+    pub fn is_blocked(&self, i: IVec2) -> bool {
+        if let Some(cell) = self.get(i) {
+            return cell.blocked;
+        }
+        false
     }
 }
  
