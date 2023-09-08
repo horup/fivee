@@ -27,7 +27,7 @@ pub struct RoundCommand {
 impl RoundCommand {
     pub fn nop() -> Self {
         Self {
-            timer:1.0,
+            timer:0.5,
             variant:Variant::Nop,
             ..Default::default()
         }
@@ -35,7 +35,7 @@ impl RoundCommand {
 
     pub fn move_to(who:Entity, to:IVec2) -> Self {
         Self {
-            timer:2.5,
+            timer:0.5,
             variant:Variant::MoveTo { who, to},
             ..Default::default()
         }
