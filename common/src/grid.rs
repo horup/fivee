@@ -1,31 +1,33 @@
 use array2d::Array2D;
 use bevy::prelude::*;
 
+#[derive(Default, Clone)]
+pub struct GridCell {
+    pub blocked:bool,
+    pub walkable:bool,
+    pub entity:Option<Entity>
+}
+
 #[derive(Resource)]
 pub struct Grid {
     size: usize,
-    cells: Array2D<Option<Entity>>,
+    cells: Array2D<GridCell>,
 }
 
 impl Grid {
     pub fn new(size: usize) -> Self {
         Self {
             size,
-            cells: Array2D::filled_with(None, 0, 0),
+            cells: Array2D::filled_with(GridCell::default(), size, size),
         }
     }
 
-    pub fn set(&mut self, i: IVec2, entity: Option<Entity>) {
+    pub fn get_mut(&mut self, i: IVec2) -> Option<&mut GridCell> {
         if let Some(cell) = self.cells.get_mut(i.x as usize, i.y as usize) {
-            *cell = entity;
+            return Some(cell);
         }
-    }
 
-    pub fn get(&mut self, i: IVec2) -> Option<Entity> {
-        if let Some(cell) = self.cells.get(i.x as usize, i.y as usize) {
-            return cell.clone();
-        }
-        None
+        return None;
     }
 
     pub fn size(&self) -> usize {
