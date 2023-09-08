@@ -20,7 +20,6 @@ pub struct CommonPlugin;
 impl Plugin for CommonPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(Grid::new(0));
-        app.insert_resource(WorldCursor::default());
         app.insert_resource(CommonAssets::default());
         app.insert_resource(Round::default());
     }

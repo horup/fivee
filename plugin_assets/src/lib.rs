@@ -12,7 +12,6 @@ impl Plugin for PluginAssets {
 fn startup(
     mut ca: ResMut<CommonAssets>,
     asset_server: Res<AssetServer>,
-    mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     // Fonts
@@ -44,6 +43,14 @@ fn startup(
         "black",
         materials.add(StandardMaterial {
             base_color: Color::BLACK,
+            unlit: true,
+            ..Default::default()
+        }),
+    );
+    ca.material_insert(
+        "white",
+        materials.add(StandardMaterial {
+            base_color: Color::WHITE,
             unlit: true,
             ..Default::default()
         }),

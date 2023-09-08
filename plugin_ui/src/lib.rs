@@ -24,6 +24,14 @@ fn system_ui_startup(mut commands:Commands, common_assets:ResMut<CommonAssets>) 
             ..default()
         }),
     ).insert(UIDebugFPS);
+
+
+    // spawn world cusor 
+    commands.spawn(PbrBundle {
+        mesh:common_assets.mesh("selector"),
+        material:common_assets.material("white"),
+        ..Default::default()
+    }).insert(WorldCursor::default());
 }
 
 fn update_camera(keys: Res<Input<KeyCode>>, mut camera:Query<(&mut Camera3d, &mut Transform, )>, time:Res<Time>, mut mouse_wheel:EventReader<MouseWheel>) {
@@ -68,8 +76,9 @@ fn update_debug(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, 
     }
 }
 
-fn update_world_cursor(mut cursor_moved_events: EventReader<CursorMoved>, mut query_camera: Query<(&GlobalTransform, &Camera)>, mut world_cursor:ResMut<WorldCursor>) {
+fn update_world_cursor(mut cursor_moved_events: EventReader<CursorMoved>, mut query_camera: Query<(&GlobalTransform, &Camera)>, mut world_cursor:Query<(&mut WorldCursor, &mut Transform)>) {
     let (global_transform_camera, camera) = query_camera.single();
+    let (mut world_cursor, mut world_cursor_transform) = world_cursor.single_mut();
     for e in cursor_moved_events.iter() {
         let pos = e.position;
         let ray = camera.viewport_to_world(global_transform_camera, pos);
@@ -79,8 +88,10 @@ fn update_world_cursor(mut cursor_moved_events: EventReader<CursorMoved>, mut qu
             if denom.abs() > 0.001 {
                 let t = -ray.origin.dot(n) / denom;
                 let p = ray.direction * t + ray.origin;
+                let grid_pos = p.truncate().as_ivec2();
+                world_cursor.grid_pos = grid_pos;
                 world_cursor.pos = p;
-                world_cursor.grid_pos = p.truncate().as_ivec2();
+                world_cursor_transform.translation = grid_pos.as_vec2().extend(0.0) + Vec3::new(0.5, 0.5, 0.0);
             }
         }
     }
