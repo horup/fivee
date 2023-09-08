@@ -26,12 +26,11 @@ fn system_startup(mut commands: Commands, sa:Res<CommonAssets>, mut round:ResMut
                 commands.spawn(PbrBundle {
                     mesh: sa.mesh("cube"),
                     material: sa.material("brick"),
-                    transform: Transform::from_xyz(x, y, 0.5),
+                    transform: Transform::from_xyz(x, y, 0.0),
                     ..default()
                 });
                 commands.spawn(PbrBundle {
-                    transform: Transform::from_xyz(x, y, 1.001)
-                        .with_rotation(Quat::from_rotation_x(PI / 2.0)),
+                    transform: Transform::from_xyz(x, y, 1.01),
                     mesh: sa.mesh("tile"),
                     material: sa.material("black"),
                     ..Default::default()
@@ -39,8 +38,7 @@ fn system_startup(mut commands: Commands, sa:Res<CommonAssets>, mut round:ResMut
             }
             if walkable {
                 commands.spawn(PbrBundle {
-                    transform: Transform::from_xyz(x, y, 0.0)
-                        .with_rotation(Quat::from_rotation_x(PI / 2.0)),
+                    transform: Transform::from_xyz(x, y, 0.0),
                         mesh: sa.mesh("tile"),
                         material: sa.material("cell"),
                     ..Default::default()
@@ -74,7 +72,7 @@ fn system_startup(mut commands: Commands, sa:Res<CommonAssets>, mut round:ResMut
 fn spawned_token(mut commands:Commands, q:Query<(Entity, &Token), Added<Token>>, sa:Res<CommonAssets>, mut materials:ResMut<Assets<StandardMaterial>>) {
     for (e, token) in q.iter() {
         commands.entity(e).insert(PbrBundle {
-            transform:Transform::from_translation(Token::pos(token.grid_pos) + Vec3::new(0.0, 0.0, 0.5)).with_rotation(Quat::from_rotation_x(PI / 2.0)),
+            transform:Transform::from_translation(Token::pos(token.grid_pos)),
             mesh:sa.mesh("token"),
             material:materials.add(StandardMaterial {
                 base_color:token.color.clone(),
