@@ -63,6 +63,7 @@ fn update_camera(
         v.y -= 1.0;
     }
 
+
     let v = v.normalize_or_zero();
     let dt = time.delta_seconds();
     let speed = 10.0;
@@ -177,7 +178,7 @@ impl Plugin for PluginUI {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, system_ui_startup);
         app.add_systems(
-            PreUpdate,
+            Update,
             (update_camera, update_debug, update_world_cursor),
         );
     }
