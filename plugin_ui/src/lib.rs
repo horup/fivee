@@ -3,7 +3,7 @@ use bevy::{
     input::mouse::MouseWheel,
     prelude::*,
 };
-use common::{CommonAssets, Round, RoundCommand, Selection, Token, UIDebugFPS, WorldCursor, UI};
+use common::{CommonAssets, Round, RoundCommand, Selection, Token, UIDebugFPS, WorldCursor, UI, Grid};
 
 mod startup;
 pub use startup::*;
@@ -28,7 +28,6 @@ fn update_camera(
     if keys.pressed(KeyCode::S) {
         v.y -= 1.0;
     }
-
 
     let v = v.normalize_or_zero();
     let dt = time.delta_seconds();
@@ -68,6 +67,7 @@ fn update_world_cursor(
     tokens: Query<(Entity, &Token)>,
     selections: Query<(Entity, &Selection, &Parent)>,
     ca: Res<CommonAssets>,
+    grid: Res<Grid>
 ) {
     let (global_transform_camera, camera) = query_camera.single();
     let (mut world_cursor, mut world_cursor_transform) = world_cursor.single_mut();
@@ -119,6 +119,9 @@ fn update_world_cursor(
                         .insert(Selection::default())
                         .id();
                     commands.entity(e).add_child(selected_e);
+
+                    let cells = rules::get_reachable_cells(&token, &grid);
+                    dbg!(cells.len());
                 }
             }
         }
