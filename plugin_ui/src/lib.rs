@@ -12,16 +12,6 @@ pub use startup::*;
 mod systems;
 pub use systems::*;
 
-
-fn update_debug(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, With<UIDebugFPS>>) {
-    for mut text in &mut query {
-        if let Some(fps_diagnostics) = diagnostics.get(FrameTimeDiagnosticsPlugin::FPS) {
-            text.sections[0].value =
-                format!("{}", fps_diagnostics.smoothed().unwrap_or_default() as i32);
-        }
-    }
-}
-
 fn update_world_cursor(
     mut commands: Commands,
     mut cursor_moved_events: EventReader<CursorMoved>,
@@ -108,10 +98,8 @@ impl Plugin for PluginUI {
     fn build(&self, app: &mut App) {
         app.insert_resource(UI::default());
         app.add_systems(Startup, system_ui_startup);
-        app.add_systems(Update, systems::camera_system);
-        app.add_systems(
-            Update,
-            (update_debug, update_world_cursor),
-        );
+        app.add_systems(PreUpdate, (camera_system, world_cursor_position_system));
+        //app.add_systems(Update, camera_system);
+        app.add_systems(PostUpdate, debug_system);
     }
 }
