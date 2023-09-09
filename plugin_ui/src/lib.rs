@@ -119,9 +119,6 @@ fn update_world_cursor(
                         .insert(Selection::default())
                         .id();
                     commands.entity(e).add_child(selected_e);
-
-                    let cells = rules::get_reachable_cells(&token, &grid);
-                    dbg!(cells.len());
                 }
             }
         }
