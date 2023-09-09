@@ -7,12 +7,12 @@ use common::{CommonAssets, Round, RoundCommand, Selection, Token, Grid};
 
 mod components;
 pub use components::*;
-mod startup;
-pub use startup::*;
 mod systems;
 pub use systems::*;
+mod events;
+pub use events::*;
 
-fn update_world_cursor(
+fn _update_world_cursor(
     mut commands: Commands,
     mut cursor_moved_events: EventReader<CursorMoved>,
     query_camera: Query<(&GlobalTransform, &Camera)>,
@@ -97,7 +97,7 @@ pub struct PluginUI;
 impl Plugin for PluginUI {
     fn build(&self, app: &mut App) {
         app.insert_resource(UI::default());
-        app.add_systems(Startup, system_ui_startup);
+        app.add_systems(Startup, startup_system);
         app.add_systems(PreUpdate, (camera_system, world_cursor_position_system));
         //app.add_systems(Update, camera_system);
         app.add_systems(PostUpdate, debug_system);
