@@ -1,5 +1,7 @@
 use bevy::prelude::*;
-use common::{CommonAssets, UIDebugFPS, WorldCursor};
+use common::CommonAssets;
+
+use crate::{UIDebugFPS, WorldCursor};
 pub fn system_ui_startup(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
     // spawn camera
     commands.spawn(Camera3dBundle {
