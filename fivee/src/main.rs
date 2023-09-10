@@ -1,4 +1,4 @@
-use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, window::PresentMode};
+use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, window::PresentMode, render::{RenderPlugin, settings::{WgpuSettings, Backends}}};
 
 fn main() {
     App::new()
@@ -7,11 +7,16 @@ fn main() {
                 .set(ImagePlugin::default_nearest())
                 .set(WindowPlugin {
                     primary_window:Some(Window {
-                        present_mode:PresentMode::AutoVsync,
+                        present_mode:PresentMode::Immediate,
                         mode:bevy::window::WindowMode::Windowed,
                         ..Default::default()
                     }),
                     ..Default::default()
+                })
+                .set(RenderPlugin {
+                    wgpu_settings: WgpuSettings {
+                        ..Default::default()
+                    },
                 }),
         )
         .add_plugins(FrameTimeDiagnosticsPlugin)
