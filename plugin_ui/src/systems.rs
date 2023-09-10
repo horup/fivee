@@ -3,9 +3,9 @@ use bevy::{
     input::mouse::MouseWheel,
     prelude::*,
 };
-use common::CommonAssets;
+use common::{CommonAssets, Selection, Token};
 
-use crate::{UIDebugFPS, WorldCursor, UI};
+use crate::{GridCursorEvent, TokenSelectedEvent, UIDebugFPS, WorldCursor, UI};
 
 pub fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
     // spawn camera
@@ -95,11 +95,13 @@ pub fn debug_system(
     }
 }
 
-pub fn world_cursor_position_system(
+pub fn cursor_changed_system(
     mut cursor_moved_events: EventReader<CursorMoved>,
     query_camera: Query<(&GlobalTransform, &Camera)>,
     mut world_cursor: Query<(&mut WorldCursor, &mut Transform)>,
     mut ui: ResMut<UI>,
+    mut writer: EventWriter<GridCursorEvent>,
+    buttons: Res<Input<MouseButton>>,
 ) {
     let (global_transform_camera, camera) = query_camera.single();
     let (mut world_cursor, mut world_cursor_transform) = world_cursor.single_mut();
@@ -121,5 +123,98 @@ pub fn world_cursor_position_system(
         }
     }
 
+    let mut fire = false;
+    let old_pos = ui.grid_cursor;
+    let pos = world_cursor.grid_pos;
+    let left_just_pressed = buttons.just_pressed(MouseButton::Left);
     ui.grid_cursor = world_cursor.grid_pos;
+    if pos != old_pos {
+        fire = true;
+    }
+    if buttons.just_pressed(MouseButton::Left) {
+        fire = true;
+    }
+
+    if fire {
+        writer.send(GridCursorEvent {
+            old_pos,
+            grid_pos: pos,
+            left_just_pressed,
+        });
+    }
+}
+
+pub fn grid_cursor_system(
+    mut ui: ResMut<UI>,
+    mut reader: EventReader<GridCursorEvent>,
+    tokens: Query<(Entity, &Token)>,
+    mut writer: EventWriter<TokenSelectedEvent>,
+) {
+    for ev in reader.iter() {
+        let grid_pos = ev.grid_pos;
+        if ev.left_just_pressed {
+            let mut selected: Option<Entity> = None;
+            for (e, token) in tokens.iter() {
+                if token.grid_pos == grid_pos {
+                    selected = Some(e);
+                    break;
+                    //ui.selected_entity = Some(e);
+                    /* let selected_e = commands
+                        .spawn(PbrBundle {
+                            mesh: ca.mesh("selector"),
+                            material: ca.material("white"),
+                            ..Default::default()
+                        })
+                        .insert(Selection::default())
+                        .id();
+                    commands.entity(e).add_child(selected_e);*/
+                }
+            }
+
+            if let Some(selected) = selected {
+                if Some(selected) != ui.selected_entity {
+                    writer.send(TokenSelectedEvent {
+                        selected: Some(selected),
+                        deselected: ui.selected_entity,
+                    });
+                    ui.selected_entity = Some(selected);
+                }
+            } else if ui.selected_entity != None {
+                writer.send(TokenSelectedEvent {
+                    selected: None,
+                    deselected: ui.selected_entity,
+                });
+                ui.selected_entity = None;
+            }
+        }
+    }
+}
+
+pub fn token_selected_system(
+    mut commands: Commands,
+    mut reader: EventReader<TokenSelectedEvent>,
+    ca: Res<CommonAssets>,
+    selections: Query<(Entity, &Selection)>,
+    ui: Res<UI>,
+) {
+    for ev in reader.iter() {
+        if let Some(e) = ev.selected {
+            let selected_e = commands
+                .spawn(PbrBundle {
+                    mesh: ca.mesh("selector"),
+                    material: ca.material("white"),
+                    ..Default::default()
+                })
+                .insert(Selection { entity: e })
+                .id();
+            commands.entity(e).add_child(selected_e);
+        }
+    }
+
+    for (selection_entity, selection) in selections.iter() {
+        if Some(selection.entity) != ui.selected_entity {
+            commands.entity(selection_entity).despawn_recursive();
+            dbg!(selection_entity);
+        }
+    }
 }

@@ -1,6 +1,6 @@
-use bevy::prelude::Component;
+use bevy::prelude::{Component, Entity};
 
-#[derive(Component, Default)]
+#[derive(Component)]
 pub struct Selection {
-
+    pub entity:Entity
 }

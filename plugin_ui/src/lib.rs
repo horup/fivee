@@ -72,7 +72,6 @@ fn _update_world_cursor(
                             material: ca.material("white"),
                             ..Default::default()
                         })
-                        .insert(Selection::default())
                         .id();
                     commands.entity(e).add_child(selected_e);
                 }
@@ -96,10 +95,12 @@ fn _update_world_cursor(
 pub struct PluginUI;
 impl Plugin for PluginUI {
     fn build(&self, app: &mut App) {
+        app.add_event::<GridCursorEvent>();
+        app.add_event::<TokenSelectedEvent>();
         app.insert_resource(UI::default());
         app.add_systems(Startup, startup_system);
-        app.add_systems(PreUpdate, (camera_system, world_cursor_position_system));
-        //app.add_systems(Update, camera_system);
+        app.add_systems(PreUpdate, (camera_system, cursor_changed_system));
+        app.add_systems(Update, (grid_cursor_system, token_selected_system));
         app.add_systems(PostUpdate, debug_system);
     }
 }
