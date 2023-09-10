@@ -301,7 +301,7 @@ fn waypoint_system(
 
 pub fn add_systems(app: &mut App) {
     app.add_systems(Startup, startup_system);
-    app.add_systems(PreUpdate, (camera_system, cursor_changed_system));
+    app.add_systems(PreUpdate, (camera_system, cursor_changed_system).chain());
     app.add_systems(
         Update,
         (
@@ -309,7 +309,7 @@ pub fn add_systems(app: &mut App) {
             token_selected_system,
             highlight_system,
             waypoint_system,
-        ),
+        ).chain(),
     );
     app.add_systems(PostUpdate, debug_system);
 }
