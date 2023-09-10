@@ -1,8 +1,18 @@
-use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
+use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, window::PresentMode};
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
+        .add_plugins(
+            DefaultPlugins
+                .set(ImagePlugin::default_nearest())
+                .set(WindowPlugin {
+                    primary_window:Some(Window {
+                        present_mode:PresentMode::AutoVsync,
+                        ..Default::default()
+                    }),
+                    ..Default::default()
+                }),
+        )
         .add_plugins(FrameTimeDiagnosticsPlugin)
         .add_plugins(common::CommonPlugin)
         .add_plugins(plugin_assets::PluginAssets)
