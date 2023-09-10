@@ -283,12 +283,12 @@ fn waypoint_system(
                     commands
                         .spawn(PbrBundle {
                             mesh: ca.mesh("token"),
-                            material: ca.material("black"),
+                            material: ca.material("white"),
                             transform: Transform::from_xyz(
                                 cell.to.x as f32 + 0.5,
                                 cell.to.y as f32 + 0.5,
                                 0.001,
-                            ),
+                            ).with_scale(Vec3::splat(0.5)),
                             ..Default::default()
                         })
                         .insert(Waypoint { grid_pos: cell.to })
