@@ -3,9 +3,9 @@ use bevy::{
     input::mouse::MouseWheel,
     prelude::*,
 };
-use common::{CommonAssets, Selection, Token};
+use common::{CommonAssets, Selection, Token, Grid};
 
-use crate::{GridCursorEvent, TokenSelectedEvent, UIDebugFPS, WorldCursor, UI};
+use crate::{GridCursorEvent, TokenSelectedEvent, UIDebugFPS, WorldCursor, UI, HighlightedCell};
 
 pub fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
     // spawn camera
@@ -214,7 +214,53 @@ pub fn token_selected_system(
     for (selection_entity, selection) in selections.iter() {
         if Some(selection.entity) != ui.selected_entity {
             commands.entity(selection_entity).despawn_recursive();
-            dbg!(selection_entity);
         }
     }
+}
+
+pub fn highlight_system(mut commands:Commands, ui:Res<UI>, tokens: Query<(&Token)>, grid:Res<Grid>, mut highlighted_cells:Query<(Entity, &mut HighlightedCell)>, ca: Res<CommonAssets>) {
+    for (_, mut hc) in highlighted_cells.iter_mut() {
+        hc.despawn = true;
+    }
+    if let Some(selected_entity) = ui.selected_entity {
+        if let Ok(token) = tokens.get(selected_entity) {
+            let reachable_cells = rules::get_reachable_cells(token, &grid);
+            for (i, rc) in reachable_cells.iter() {
+                let i = *i;
+                let mut spawn = true;
+                for (_, mut hc) in highlighted_cells.iter_mut() {
+                    if hc.grid_pos == i {
+                        hc.despawn = false;
+                        spawn = false;
+                    }
+                }
+
+                if spawn {
+                    commands.spawn(PbrBundle {
+                        mesh:ca.mesh("cell"),
+                        transform:Transform::from_xyz(i.x as f32 + 0.5,  i.y as f32 + 0.5, 0.001),
+                        material:ca.material("white"),
+                        ..Default::default()
+                    }).insert(HighlightedCell {
+                        despawn:false,
+                        grid_pos:i
+                    });
+                }
+            }
+        }
+    }
+
+    for (e, hc) in highlighted_cells.iter() {
+        if hc.despawn {
+            commands.entity(e).despawn();
+        }
+    }
+}
+
+
+pub fn add_systems(app:&mut App) {
+    app.add_systems(Startup, startup_system);
+    app.add_systems(PreUpdate, (camera_system, cursor_changed_system));
+    app.add_systems(Update, (grid_cursor_system, token_selected_system, highlight_system));
+    app.add_systems(PostUpdate, debug_system);
 }

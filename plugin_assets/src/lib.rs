@@ -57,7 +57,7 @@ fn startup(
     );
 
     // Meshes
-    ca.mesh_insert("tile", asset_server.load("meshes/cell.gltf#Mesh0/Primitive0"));
+    ca.mesh_insert("cell", asset_server.load("meshes/cell.gltf#Mesh0/Primitive0"));
     ca.mesh_insert("cube", asset_server.load("meshes/cube.gltf#Mesh0/Primitive0"));
     ca.mesh_insert("token", asset_server.load("meshes/token.gltf#Mesh0/Primitive0"));
     ca.mesh_insert("selector", asset_server.load("meshes/selector.gltf#Mesh0/Primitive0"));

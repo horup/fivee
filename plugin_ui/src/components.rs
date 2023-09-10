@@ -15,3 +15,9 @@ pub struct WorldCursor {
     pub pos:Vec3,
     pub grid_pos:IVec2
 }
+
+#[derive(Default, Component)]
+pub struct HighlightedCell {
+    pub grid_pos:IVec2,
+    pub despawn:bool
+}

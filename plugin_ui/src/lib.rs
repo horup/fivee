@@ -98,9 +98,6 @@ impl Plugin for PluginUI {
         app.add_event::<GridCursorEvent>();
         app.add_event::<TokenSelectedEvent>();
         app.insert_resource(UI::default());
-        app.add_systems(Startup, startup_system);
-        app.add_systems(PreUpdate, (camera_system, cursor_changed_system));
-        app.add_systems(Update, (grid_cursor_system, token_selected_system));
-        app.add_systems(PostUpdate, debug_system);
+        add_systems(app);
     }
 }

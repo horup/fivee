@@ -35,7 +35,7 @@ pub fn startup(mut commands: Commands, sa:Res<CommonAssets>, mut round:ResMut<Ro
                 });
                 commands.spawn(PbrBundle {
                     transform: Transform::from_xyz(x, y, 1.01),
-                    mesh: sa.mesh("tile"),
+                    mesh: sa.mesh("cell"),
                     material: sa.material("black"),
                     ..Default::default()
                 });
@@ -43,7 +43,7 @@ pub fn startup(mut commands: Commands, sa:Res<CommonAssets>, mut round:ResMut<Ro
             if walkable {
                 commands.spawn(PbrBundle {
                     transform: Transform::from_xyz(x, y, 0.0),
-                        mesh: sa.mesh("tile"),
+                        mesh: sa.mesh("cell"),
                         material: sa.material("cell"),
                     ..Default::default()
                 });
