@@ -8,7 +8,7 @@ fn main() {
                 .set(WindowPlugin {
                     primary_window:Some(Window {
                         present_mode:PresentMode::AutoVsync,
-                        mode:bevy::window::WindowMode::Fullscreen,
+                        mode:bevy::window::WindowMode::Windowed,
                         ..Default::default()
                     }),
                     ..Default::default()
