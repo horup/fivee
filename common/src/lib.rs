@@ -21,7 +21,7 @@ impl Plugin for CommonPlugin {
         app.insert_resource(Grid::new(0));
         app.insert_resource(CommonAssets::default());
         app.insert_resource(Round::default());
-        app.add_systems(PostUpdate, (kill_system, age_system));
+        app.add_systems(Last, (kill_system, age_system));
     }
 }
 
