@@ -3,11 +3,13 @@ use bevy::{
     input::mouse::MouseWheel,
     prelude::*,
 };
-use common::{CommonAssets, Selection, Token, Grid};
+use common::{CommonAssets, Grid, Selection, ShortLived, Token};
 
-use crate::{GridCursorEvent, TokenSelectedEvent, UIDebugFPS, WorldCursor, UI, HighlightedCell};
+use crate::{
+    GridCursorEvent, HighlightedCell, TokenSelectedEvent, UIDebugFPS, Waypoint, WorldCursor, UI,
+};
 
-pub fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
+fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
     // spawn camera
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(5.0, 0.0, 8.0).looking_at(Vec3::new(5.0, 8.0, 0.0), Vec3::Y),
@@ -44,7 +46,7 @@ pub fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets
         .insert(WorldCursor::default());
 }
 
-pub fn camera_system(
+fn camera_system(
     keys: Res<Input<KeyCode>>,
     mut camera: Query<(&mut Camera3d, &mut Transform)>,
     time: Res<Time>,
@@ -83,10 +85,7 @@ pub fn camera_system(
     }
 }
 
-pub fn debug_system(
-    diagnostics: Res<DiagnosticsStore>,
-    mut query: Query<&mut Text, With<UIDebugFPS>>,
-) {
+fn debug_system(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, With<UIDebugFPS>>) {
     for mut text in &mut query {
         if let Some(fps_diagnostics) = diagnostics.get(FrameTimeDiagnosticsPlugin::FPS) {
             text.sections[0].value =
@@ -95,7 +94,7 @@ pub fn debug_system(
     }
 }
 
-pub fn cursor_changed_system(
+fn cursor_changed_system(
     mut cursor_moved_events: EventReader<CursorMoved>,
     query_camera: Query<(&GlobalTransform, &Camera)>,
     mut world_cursor: Query<(&mut WorldCursor, &mut Transform)>,
@@ -144,7 +143,7 @@ pub fn cursor_changed_system(
     }
 }
 
-pub fn grid_cursor_system(
+fn grid_cursor_system(
     mut ui: ResMut<UI>,
     mut reader: EventReader<GridCursorEvent>,
     tokens: Query<(Entity, &Token)>,
@@ -190,7 +189,7 @@ pub fn grid_cursor_system(
     }
 }
 
-pub fn token_selected_system(
+fn token_selected_system(
     mut commands: Commands,
     mut reader: EventReader<TokenSelectedEvent>,
     ca: Res<CommonAssets>,
@@ -218,49 +217,99 @@ pub fn token_selected_system(
     }
 }
 
-pub fn highlight_system(mut commands:Commands, ui:Res<UI>, tokens: Query<(&Token)>, grid:Res<Grid>, mut highlighted_cells:Query<(Entity, &mut HighlightedCell)>, ca: Res<CommonAssets>) {
-    for (_, mut hc) in highlighted_cells.iter_mut() {
-        hc.despawn = true;
-    }
+fn highlight_system(
+    mut commands: Commands,
+    ui: Res<UI>,
+    tokens: Query<(&Token)>,
+    grid: Res<Grid>,
+    mut highlighted_cells: Query<(Entity, &mut HighlightedCell, &mut ShortLived)>,
+    ca: Res<CommonAssets>,
+) {
     if let Some(selected_entity) = ui.selected_entity {
         if let Ok(token) = tokens.get(selected_entity) {
             let reachable_cells = rules::get_reachable_cells(token, &grid);
-            for (i, rc) in reachable_cells.iter() {
+            for (i, _) in reachable_cells.iter() {
                 let i = *i;
                 let mut spawn = true;
-                for (_, mut hc) in highlighted_cells.iter_mut() {
+                for (_, hc, mut sl) in highlighted_cells.iter_mut() {
                     if hc.grid_pos == i {
-                        hc.despawn = false;
+                        sl.despawn = false;
                         spawn = false;
                     }
                 }
 
                 if spawn {
-                    commands.spawn(PbrBundle {
-                        mesh:ca.mesh("cell"),
-                        transform:Transform::from_xyz(i.x as f32 + 0.5,  i.y as f32 + 0.5, 0.001),
-                        material:ca.material("white"),
-                        ..Default::default()
-                    }).insert(HighlightedCell {
-                        despawn:false,
-                        grid_pos:i
-                    });
+                    commands
+                        .spawn(PbrBundle {
+                            mesh: ca.mesh("cell"),
+                            transform: Transform::from_xyz(
+                                i.x as f32 + 0.5,
+                                i.y as f32 + 0.5,
+                                0.001,
+                            ),
+                            material: ca.material("highlight_blue"),
+                            ..Default::default()
+                        })
+                        .insert(HighlightedCell { grid_pos: i })
+                        .insert(ShortLived::default());
                 }
             }
         }
     }
+}
 
-    for (e, hc) in highlighted_cells.iter() {
-        if hc.despawn {
-            commands.entity(e).despawn();
+fn waypoint_system(
+    mut commands: Commands,
+    tokens: Query<(&Token)>,
+    ui: Res<UI>,
+    mut waypoints: Query<(&Waypoint, &mut ShortLived)>,
+    grid: Res<Grid>,
+    ca: Res<CommonAssets>,
+) {
+    if let Some(selected_entity) = ui.selected_entity {
+        if let Ok(token) = tokens.get(selected_entity) {
+            let path = rules::get_path(token, &grid, ui.grid_cursor);
+            for cell in path.iter() {
+                let mut spawn = true;
+                for (wp, mut sl) in waypoints.iter_mut() {
+                    if wp.grid_pos == cell.to {
+                        sl.despawn = false;
+                        spawn = false;
+                        break;
+                    }
+                } 
+                
+                if spawn {
+                    commands
+                        .spawn(PbrBundle {
+                            mesh: ca.mesh("token"),
+                            material: ca.material("black"),
+                            transform: Transform::from_xyz(
+                                cell.to.x as f32 + 0.5,
+                                cell.to.y as f32 + 0.5,
+                                0.001,
+                            ),
+                            ..Default::default()
+                        })
+                        .insert(Waypoint { grid_pos: cell.to })
+                        .insert(ShortLived::default());
+                }
+            }
         }
     }
 }
 
-
-pub fn add_systems(app:&mut App) {
+pub fn add_systems(app: &mut App) {
     app.add_systems(Startup, startup_system);
     app.add_systems(PreUpdate, (camera_system, cursor_changed_system));
-    app.add_systems(Update, (grid_cursor_system, token_selected_system, highlight_system));
+    app.add_systems(
+        Update,
+        (
+            grid_cursor_system,
+            token_selected_system,
+            highlight_system,
+            waypoint_system,
+        ),
+    );
     app.add_systems(PostUpdate, debug_system);
 }

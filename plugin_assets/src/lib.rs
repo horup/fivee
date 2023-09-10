@@ -55,6 +55,15 @@ fn startup(
             ..Default::default()
         }),
     );
+    ca.material_insert(
+        "highlight_blue",
+        materials.add(StandardMaterial {
+            base_color: Color::Rgba { red: 0.0, green: 0.0, blue: 1.0, alpha: 0.25 },
+            unlit: true,
+            alpha_mode:AlphaMode::Add,
+            ..Default::default()
+        }),
+    );
 
     // Meshes
     ca.mesh_insert("cell", asset_server.load("meshes/cell.gltf#Mesh0/Primitive0"));
