@@ -74,7 +74,7 @@ impl Round {
         self.commands.pop_front()
     }
 
-    pub fn executing(&self) -> bool {
+    pub fn is_executing(&self) -> bool {
         !self.commands.is_empty()
     }
 }

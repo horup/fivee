@@ -3,7 +3,7 @@ use bevy::{
     input::mouse::MouseWheel,
     prelude::*,
 };
-use common::{CommonAssets, Grid, Selection, ShortLived, Token};
+use common::{CommonAssets, Grid, Selection, ShortLived, Token, Round};
 
 use crate::{
     GridCursorEvent, HighlightedCell, TokenSelectedEvent, UIDebugFPS, Waypoint, WorldCursor, UI,
@@ -126,11 +126,15 @@ fn cursor_changed_system(
     let old_pos = ui.grid_cursor;
     let pos = world_cursor.grid_pos;
     let left_just_pressed = buttons.just_pressed(MouseButton::Left);
+    let right_just_pressed = buttons.just_pressed(MouseButton::Right);
     ui.grid_cursor = world_cursor.grid_pos;
     if pos != old_pos {
         fire = true;
     }
-    if buttons.just_pressed(MouseButton::Left) {
+    if left_just_pressed {
+        fire = true;
+    }
+    if right_just_pressed {
         fire = true;
     }
 
@@ -139,6 +143,7 @@ fn cursor_changed_system(
             old_pos,
             grid_pos: pos,
             left_just_pressed,
+            right_just_pressed
         });
     }
 }
@@ -157,16 +162,6 @@ fn grid_cursor_system(
                 if token.grid_pos == grid_pos {
                     selected = Some(e);
                     break;
-                    //ui.selected_entity = Some(e);
-                    /* let selected_e = commands
-                        .spawn(PbrBundle {
-                            mesh: ca.mesh("selector"),
-                            material: ca.material("white"),
-                            ..Default::default()
-                        })
-                        .insert(Selection::default())
-                        .id();
-                    commands.entity(e).add_child(selected_e);*/
                 }
             }
 
@@ -189,7 +184,7 @@ fn grid_cursor_system(
     }
 }
 
-fn token_selected_system(
+fn entity_selected_system(
     mut commands: Commands,
     mut reader: EventReader<TokenSelectedEvent>,
     ca: Res<CommonAssets>,
@@ -299,6 +294,14 @@ fn waypoint_system(
     }
 }
 
+pub fn do_something_system(mut round:ResMut<Round>) {
+    if round.is_executing() {
+        return;
+    }
+
+    
+}
+
 pub fn add_systems(app: &mut App) {
     app.add_systems(Startup, startup_system);
     app.add_systems(PreUpdate, (camera_system, cursor_changed_system).chain());
@@ -306,9 +309,10 @@ pub fn add_systems(app: &mut App) {
         Update,
         (
             grid_cursor_system,
-            token_selected_system,
+            entity_selected_system,
             highlight_system,
             waypoint_system,
+            do_something_system
         ).chain(),
     );
     app.add_systems(PostUpdate, debug_system);

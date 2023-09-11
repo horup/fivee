@@ -45,7 +45,7 @@ fn _update_world_cursor(
         }
     }
 
-    if round.executing() {
+    if round.is_executing() {
         return;
     }
 
