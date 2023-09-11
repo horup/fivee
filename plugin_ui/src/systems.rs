@@ -187,6 +187,7 @@ fn grid_cursor_system(
         }
         if ev.right_just_pressed {
             if let Some(selected_entity) = ui.selected_entity {
+                dbg!("right pressed");
                 round.push_front_command(RoundCommand::move_far(selected_entity, grid_pos))
             }
         }
