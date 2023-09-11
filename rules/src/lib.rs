@@ -83,23 +83,25 @@ use common::{Grid, Token};
 #[derive(Clone, Copy)]
 pub struct ReachableCell {
     pub to: IVec2,
-    pub cost_ft: i16,
+    pub cost_ft: f32,
     pub from :IVec2
 }
 
 
-fn move_from(pos:IVec2, map:&mut HashMap<IVec2, ReachableCell>, grid:&Grid, movement_total_ft: i16, movement_cost_ft: i16) {
+fn move_from(pos:IVec2, map:&mut HashMap<IVec2, ReachableCell>, grid:&Grid, movement_total_ft: f32, movement_cost_ft: f32) {
+    let cost = 5.0;
+    let diagonal_cost = 7.07;
     let ds = [
-        IVec2::new(-1, -1),
-        IVec2::new(0, -1),
-        IVec2::new(1, -1),
-        IVec2::new(-1, 0),
-        IVec2::new(1, 0),
-        IVec2::new(-1, 1),
-        IVec2::new(0, 1),
-        IVec2::new(1, 1),
+        (IVec2::new(-1, -1), diagonal_cost),
+        (IVec2::new(0, -1), cost),
+        (IVec2::new(1, -1), cost),
+        (IVec2::new(-1, 0), cost),
+        (IVec2::new(1, 0), cost),
+        (IVec2::new(-1, 1), diagonal_cost),
+        (IVec2::new(0, 1), cost),
+        (IVec2::new(1, 1), diagonal_cost),
     ];
-    for d in ds {
+    for (d, cost) in ds {
         let new_pos = pos + d;
         if let Some(cell) = grid.get(IVec2::new(new_pos.x, new_pos.y)) {
             if cell.blocked {
@@ -107,7 +109,7 @@ fn move_from(pos:IVec2, map:&mut HashMap<IVec2, ReachableCell>, grid:&Grid, move
             }
         }
 
-        let movement_cost_ft = movement_cost_ft + 5;
+        let movement_cost_ft = movement_cost_ft + cost;
         if movement_cost_ft > movement_total_ft {
             continue;
         }
@@ -135,7 +137,7 @@ fn move_from(pos:IVec2, map:&mut HashMap<IVec2, ReachableCell>, grid:&Grid, move
 pub fn get_reachable_cells(token:&Token, grid:&Grid) -> HashMap<IVec2, ReachableCell> {
     let mut map = HashMap::new();
     let start_pos = token.grid_pos;
-    move_from(token.grid_pos, &mut map, grid, 30, 0);
+    move_from(token.grid_pos, &mut map, grid, 30.0, 0.0);
     map.remove(&start_pos);
     map
 }

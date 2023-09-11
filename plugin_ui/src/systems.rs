@@ -1,9 +1,10 @@
 use bevy::{
     diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin},
     input::mouse::MouseWheel,
-    prelude::*, utils::Instant,
+    prelude::*,
+    utils::Instant,
 };
-use common::{CommonAssets, Grid, Selection, ShortLived, Token, Round, RoundCommand};
+use common::{CommonAssets, Grid, Round, RoundCommand, Selection, ShortLived, Token};
 
 use crate::{
     GridCursorEvent, HighlightedCell, TokenSelectedEvent, UIDebugFPS, Waypoint, WorldCursor, UI,
@@ -144,7 +145,7 @@ fn cursor_changed_system(
             old_pos,
             grid_pos: pos,
             left_just_pressed,
-            right_just_pressed
+            right_just_pressed,
         });
     }
 }
@@ -154,7 +155,7 @@ fn grid_cursor_system(
     mut reader: EventReader<GridCursorEvent>,
     tokens: Query<(Entity, &Token)>,
     mut writer: EventWriter<TokenSelectedEvent>,
-    mut round:ResMut<Round>
+    mut round: ResMut<Round>,
 ) {
     if round.is_executing() {
         return;
@@ -230,7 +231,7 @@ fn highlight_system(
     grid: Res<Grid>,
     mut highlighted_cells: Query<(Entity, &mut HighlightedCell, &mut ShortLived)>,
     ca: Res<CommonAssets>,
-    round:Res<Round>
+    round: Res<Round>,
 ) {
     if round.is_executing() {
         return;
@@ -275,7 +276,7 @@ fn waypoint_system(
     mut waypoints: Query<(&Waypoint, &mut ShortLived)>,
     grid: Res<Grid>,
     ca: Res<CommonAssets>,
-    round:Res<Round>
+    round: Res<Round>,
 ) {
     if round.is_executing() {
         return;
@@ -292,8 +293,8 @@ fn waypoint_system(
                         spawn = false;
                         break;
                     }
-                } 
-                
+                }
+
                 if spawn {
                     commands
                         .spawn(PbrBundle {
@@ -303,7 +304,8 @@ fn waypoint_system(
                                 cell.to.x as f32 + 0.5,
                                 cell.to.y as f32 + 0.5,
                                 0.001,
-                            ).with_scale(Vec3::splat(0.5)),
+                            )
+                            .with_scale(Vec3::splat(0.5)),
                             ..Default::default()
                         })
                         .insert(Waypoint { grid_pos: cell.to })
@@ -316,15 +318,17 @@ fn waypoint_system(
 
 pub fn add_systems(app: &mut App) {
     app.add_systems(Startup, startup_system);
-    app.add_systems(PreUpdate, (camera_system, cursor_changed_system).chain());
     app.add_systems(
         Update,
         (
+            camera_system,
+            cursor_changed_system,
             grid_cursor_system,
             entity_selected_system,
             highlight_system,
             waypoint_system,
-        ).chain(),
+        )
+            .chain(),
     );
     app.add_systems(PostUpdate, debug_system);
 }
