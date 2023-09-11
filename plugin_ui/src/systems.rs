@@ -3,7 +3,7 @@ use bevy::{
     input::mouse::MouseWheel,
     prelude::*,
 };
-use common::{CommonAssets, Grid, Selection, ShortLived, Token, Round};
+use common::{CommonAssets, Grid, Selection, ShortLived, Token, Round, RoundCommand};
 
 use crate::{
     GridCursorEvent, HighlightedCell, TokenSelectedEvent, UIDebugFPS, Waypoint, WorldCursor, UI,
@@ -153,7 +153,11 @@ fn grid_cursor_system(
     mut reader: EventReader<GridCursorEvent>,
     tokens: Query<(Entity, &Token)>,
     mut writer: EventWriter<TokenSelectedEvent>,
+    mut round:ResMut<Round>
 ) {
+    if round.is_executing() {
+        return;
+    }
     for ev in reader.iter() {
         let grid_pos = ev.grid_pos;
         if ev.left_just_pressed {
@@ -179,6 +183,11 @@ fn grid_cursor_system(
                     deselected: ui.selected_entity,
                 });
                 ui.selected_entity = None;
+            }
+        }
+        if ev.right_just_pressed {
+            if let Some(selected_entity) = ui.selected_entity {
+                round.push_front_command(RoundCommand::move_far(selected_entity, grid_pos))
             }
         }
     }
@@ -215,11 +224,15 @@ fn entity_selected_system(
 fn highlight_system(
     mut commands: Commands,
     ui: Res<UI>,
-    tokens: Query<(&Token)>,
+    tokens: Query<&Token>,
     grid: Res<Grid>,
     mut highlighted_cells: Query<(Entity, &mut HighlightedCell, &mut ShortLived)>,
     ca: Res<CommonAssets>,
+    round:Res<Round>
 ) {
+    if round.is_executing() {
+        return;
+    }
     if let Some(selected_entity) = ui.selected_entity {
         if let Ok(token) = tokens.get(selected_entity) {
             let reachable_cells = rules::get_reachable_cells(token, &grid);
@@ -260,7 +273,12 @@ fn waypoint_system(
     mut waypoints: Query<(&Waypoint, &mut ShortLived)>,
     grid: Res<Grid>,
     ca: Res<CommonAssets>,
+    round:Res<Round>
 ) {
+    if round.is_executing() {
+        return;
+    }
+
     if let Some(selected_entity) = ui.selected_entity {
         if let Ok(token) = tokens.get(selected_entity) {
             let path = rules::get_path(token, &grid, ui.grid_cursor);
@@ -294,14 +312,6 @@ fn waypoint_system(
     }
 }
 
-pub fn do_something_system(mut round:ResMut<Round>) {
-    if round.is_executing() {
-        return;
-    }
-
-    
-}
-
 pub fn add_systems(app: &mut App) {
     app.add_systems(Startup, startup_system);
     app.add_systems(PreUpdate, (camera_system, cursor_changed_system).chain());
@@ -312,7 +322,6 @@ pub fn add_systems(app: &mut App) {
             entity_selected_system,
             highlight_system,
             waypoint_system,
-            do_something_system
         ).chain(),
     );
     app.add_systems(PostUpdate, debug_system);

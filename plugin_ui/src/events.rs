@@ -13,8 +13,3 @@ pub struct TokenSelectedEvent {
     pub selected: Option<Entity>,
     pub deselected: Option<Entity>,
 }
-
-#[derive(Event)]
-pub enum PerformActionEvent {
-    MoveFar { grid_pos: IVec2 },
-}

@@ -10,3 +10,4 @@ common = { path = "../common" }
 bevy = { workspace = true }
 mapgen = { workspace = true }
 rand = { workspace = true }
+rules = { path = "../rules" }
