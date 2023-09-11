@@ -1,7 +1,7 @@
 use bevy::{
     diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin},
     input::mouse::MouseWheel,
-    prelude::*,
+    prelude::*, utils::Instant,
 };
 use common::{CommonAssets, Grid, Selection, ShortLived, Token, Round, RoundCommand};
 
@@ -135,6 +135,7 @@ fn cursor_changed_system(
         fire = true;
     }
     if right_just_pressed {
+        dbg!("right");
         fire = true;
     }
 
@@ -159,6 +160,7 @@ fn grid_cursor_system(
         return;
     }
     for ev in reader.iter() {
+        dbg!("event");
         let grid_pos = ev.grid_pos;
         if ev.left_just_pressed {
             let mut selected: Option<Entity> = None;
@@ -187,7 +189,6 @@ fn grid_cursor_system(
         }
         if ev.right_just_pressed {
             if let Some(selected_entity) = ui.selected_entity {
-                dbg!("right pressed");
                 round.push_front_command(RoundCommand::move_far(selected_entity, grid_pos))
             }
         }
