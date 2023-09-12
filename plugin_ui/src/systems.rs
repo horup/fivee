@@ -82,21 +82,21 @@ fn camera_system(
 
     // pan camera
     let mut v = Vec2::new(0.0, 0.0);
+    let forward = transform.forward().truncate().normalize_or_zero();
+    let side = Vec2::new(-forward.y, forward.x);
     if keys.pressed(KeyCode::A) {
-        v.x -= 1.0;
+        v += side;
     }
     if keys.pressed(KeyCode::D) {
-        v.x += 1.0;
+        v -= side;
     }
     if keys.pressed(KeyCode::W) {
-        v.y += 1.0;
+        v += forward;
     }
     if keys.pressed(KeyCode::S) {
-        v.y -= 1.0;
+        v -= forward;
     }
- /*   let f = forward.truncate().normalize_or_zero();
-    let v = v * f;
-    let v = v.normalize_or_zero();*/
+
     let pan_speed = 10.0;
     let v = v * pan_speed * dt;
     transform.translation += v.extend(0.0);
