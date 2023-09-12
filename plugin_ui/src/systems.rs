@@ -53,7 +53,34 @@ fn camera_system(
     time: Res<Time>,
     mut mouse_wheel: EventReader<MouseWheel>,
 ) {
-    let (_camera, mut transform) = camera.single_mut();
+    let (_amera, mut transform) = camera.single_mut();
+    let dt = time.delta_seconds();
+
+    // rotate camera
+    let mut r = 0.0;
+    if keys.pressed(KeyCode::Q) {
+        r += 1.0;
+    }
+    if keys.pressed(KeyCode::E) {
+        r -= 1.0;
+    }
+    let forward = transform.forward();
+    let ray = Ray {
+        origin: transform.translation,
+        direction: forward,
+    };
+
+    let mut look_at = ray_plane_intersection(ray).unwrap();
+    look_at.z = 0.0;
+
+    let v = look_at - transform.translation;
+    let d = v.length();
+    let v = v.normalize();
+    transform.translation += Vec3::new(0.0, 1.0, 0.0) * r * dt * 10.0;
+    let v = look_at - transform.translation;
+    transform.translation = look_at - v.normalize_or_zero() * d;
+
+    // pan camera
     let mut v = Vec2::new(0.0, 0.0);
     if keys.pressed(KeyCode::A) {
         v.x -= 1.0;
@@ -69,11 +96,11 @@ fn camera_system(
     }
 
     let v = v.normalize_or_zero();
-    let dt = time.delta_seconds();
     let pan_speed = 10.0;
     let v = v * pan_speed * dt;
     transform.translation += v.extend(0.0);
 
+    // zoom camera
     let mut zoom_delta = 0.0;
     for ev in mouse_wheel.iter() {
         let sy = ev.y;
@@ -150,6 +177,18 @@ fn cursor_changed_system(
             right_just_pressed,
         });
     }
+}
+
+fn ray_plane_intersection(ray:Ray) -> Option<Vec3> {
+    let n = Vec3::new(0.0, 0.0, 1.0);
+    let denom = n.dot(ray.direction);
+    if denom.abs() > 0.001 {
+        let t = -ray.origin.dot(n) / denom;
+        let p = ray.direction * t + ray.origin;
+        return Some(p);
+    }
+
+    return None;
 }
 
 fn grid_cursor_system(

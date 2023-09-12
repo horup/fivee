@@ -47,10 +47,7 @@
                     <mxGeometry x="-420" y="360" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="29" value="implement camera rotation" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="500" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="30" value="fix zoom by camera forward" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-270" y="290" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-120" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="33" value="implement spring camera" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="430" width="120" height="60" as="geometry"/>
@@ -58,16 +55,16 @@
                 <mxCell id="35" value="implement round management" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="710" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="36" value="implement resources like movement" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="36" value="implement resources like movement" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="640" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="37" value="implement pan to selected" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="37" value="implement pan to selected" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="780" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="38" value="improve walls such they are walls and not blocks" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="38" value="improve walls such they are walls and not blocks" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="850" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="39" value="fix diagnoal moving through wall" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="39" value="fix diagnoal moving through wall" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="920" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>
