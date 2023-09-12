@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="fbY-3la6N2TdW8390JJk" name="Page-1">
-        <mxGraphModel dx="2620" dy="904" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1748" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -46,23 +46,26 @@
                 <mxCell id="24" value="improve panning by zoom factor" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="360" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="25" value="implement world cursor" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-260" y="290" width="120" height="60" as="geometry"/>
-                </mxCell>
                 <mxCell id="29" value="implement camera rotation" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="500" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="30" value="fix zoom by camera forward" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="570" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-270" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="32" value="implement tween moving of token" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="640" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="33" value="implement tween moving of camera" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="33" value="implement spring camera" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="430" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="35" value="implement round management" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="-260" y="360" width="120" height="60" as="geometry"/>
+                <mxCell id="35" value="implement round management" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-420" y="710" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="implement resources like movement" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="-420" y="640" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="implement pan to selected" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="-420" y="780" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="improve walls such they are walls and not blocks" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="-420" y="850" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

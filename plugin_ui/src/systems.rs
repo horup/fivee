@@ -70,20 +70,22 @@ fn camera_system(
 
     let v = v.normalize_or_zero();
     let dt = time.delta_seconds();
-    let speed = 10.0;
-    let v = v * speed * dt;
-    let mut v = v.extend(0.0);
+    let pan_speed = 10.0;
+    let v = v * pan_speed * dt;
+    transform.translation += v.extend(0.0);
+
+    let mut zoom_delta = 0.0;
     for ev in mouse_wheel.iter() {
         let sy = ev.y;
-        v.z -= sy;
+        zoom_delta += ev.y;
     }
 
-    transform.translation += v;
-
-    let min_z = 5.0;
-    if transform.translation.z < 5.0 {
-        transform.translation.z = min_z;
-    }
+    let v = transform.translation + transform.forward() * zoom_delta;
+    let max_zoom = 5.0;
+    let min_zoom = 100.0;
+    if v.z > max_zoom && v.z < min_zoom {
+        transform.translation = v;
+    } 
 }
 
 fn debug_system(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, With<UIDebugFPS>>) {

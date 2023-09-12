@@ -94,7 +94,7 @@ fn move_from(pos:IVec2, map:&mut HashMap<IVec2, ReachableCell>, grid:&Grid, move
     let ds = [
         (IVec2::new(-1, -1), diagonal_cost),
         (IVec2::new(0, -1), cost),
-        (IVec2::new(1, -1), cost),
+        (IVec2::new(1, -1), diagonal_cost),
         (IVec2::new(-1, 0), cost),
         (IVec2::new(1, 0), cost),
         (IVec2::new(-1, 1), diagonal_cost),
