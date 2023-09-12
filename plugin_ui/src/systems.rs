@@ -203,7 +203,6 @@ fn grid_cursor_system(
         return;
     }
     for ev in reader.iter() {
-        dbg!("event");
         let grid_pos = ev.grid_pos;
         if ev.left_just_pressed {
             let mut selected: Option<Entity> = None;
