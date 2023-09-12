@@ -46,9 +46,6 @@
                 <mxCell id="24" value="improve panning by zoom factor" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="360" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="29" value="implement camera rotation" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-120" y="290" width="120" height="60" as="geometry"/>
-                </mxCell>
                 <mxCell id="33" value="implement spring camera" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="430" width="120" height="60" as="geometry"/>
                 </mxCell>
@@ -66,6 +63,9 @@
                 </mxCell>
                 <mxCell id="39" value="fix diagnoal moving through wall" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="920" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="fix pan when rotated" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="-120" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
