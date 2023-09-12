@@ -59,10 +59,10 @@ fn camera_system(
     // rotate camera
     let mut r = 0.0;
     if keys.pressed(KeyCode::Q) {
-        r += 1.0;
+        r -= 1.0;
     }
     if keys.pressed(KeyCode::E) {
-        r -= 1.0;
+        r += 1.0;
     }
     let forward = transform.forward();
     let ray = Ray {
@@ -72,13 +72,13 @@ fn camera_system(
 
     let mut look_at = ray_plane_intersection(ray).unwrap();
     look_at.z = 0.0;
-
-    let v = look_at - transform.translation;
-    let d = v.length();
-    let v = v.normalize();
-    transform.translation += Vec3::new(0.0, 1.0, 0.0) * r * dt * 10.0;
-    let v = look_at - transform.translation;
-    transform.translation = look_at - v.normalize_or_zero() * d;
+    let mut v = look_at - transform.translation;
+    let vz = v.z;
+    v.z = 0.0;
+    let mut v = Quat::from_rotation_z( r * dt) * v;
+    v.z = vz;
+    transform.translation = look_at - v;
+    transform.look_at(look_at, Vec3::Z);
 
     // pan camera
     let mut v = Vec2::new(0.0, 0.0);
@@ -94,8 +94,9 @@ fn camera_system(
     if keys.pressed(KeyCode::S) {
         v.y -= 1.0;
     }
-
-    let v = v.normalize_or_zero();
+ /*   let f = forward.truncate().normalize_or_zero();
+    let v = v * f;
+    let v = v.normalize_or_zero();*/
     let pan_speed = 10.0;
     let v = v * pan_speed * dt;
     transform.translation += v.extend(0.0);
