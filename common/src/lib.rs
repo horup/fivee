@@ -9,6 +9,8 @@ pub use round::*;
 pub mod math;
 mod short_lived;
 pub use short_lived::*;
+mod settings;
+pub use settings::*;
 
 mod selection;
 pub use selection::*;
@@ -21,10 +23,10 @@ impl Plugin for CommonPlugin {
         app.insert_resource(Grid::new(0));
         app.insert_resource(CommonAssets::default());
         app.insert_resource(Round::default());
+        app.insert_resource(Settings::default());
         app.add_systems(Last, (kill_system, age_system).chain());
     }
 }
-
 
 fn kill_system(mut commands:Commands, q:Query<(Entity, &ShortLived)>) {
     for (e, s) in q.iter() {
