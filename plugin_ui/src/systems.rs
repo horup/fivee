@@ -165,7 +165,6 @@ fn cursor_changed_system(
         fire = true;
     }
     if right_just_pressed {
-        dbg!("right");
         fire = true;
     }
 
