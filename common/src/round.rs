@@ -76,7 +76,7 @@ impl RoundCommand {
 #[derive(Resource, Default)]
 pub struct Round {
     commands: VecDeque<RoundCommand>,
-    pub turn_owner: Option<Entity>,
+    pub turn_holder: Option<Entity>,
     pub initiative_order: Vec<Entity>,
     pub has_taken_turn: HashMap<Entity, ()>,
     pub round_num:u64

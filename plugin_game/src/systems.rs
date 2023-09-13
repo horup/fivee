@@ -176,8 +176,8 @@ fn finish_round_command(
             }
         }
         common::Variant::GiveTurn { who } => {
-            if round.turn_owner == Some(who) {
-                round.turn_owner = None;
+            if round.turn_holder == Some(who) {
+                round.turn_holder = None;
                 round.has_taken_turn.insert(who, ());
             }
         }
@@ -243,17 +243,22 @@ fn assign_initiative_system(mut round: ResMut<Round>, tokens:Query<(Entity, &Tok
     }
 }
 
-fn assign_turn_system(mut round:ResMut<Round>, tokens:Query<(Entity, &Token)>) {
-
+fn assign_turn_holder_system(mut round:ResMut<Round>, tokens:Query<(Entity, &Token)>) {
     if round.is_executing() {
         return;
     }
 
-    if round.turn_owner.is_none() {
+    if round.turn_holder.is_none() {
         // no one has turn, give the turn to someone
+        for e in round.initiative_order.iter() {
+            if round.has_taken_turn.contains_key(e) == false {
+                round.turn_holder = Some(*e);
+                break;
+            }
+        }
     }
 
-    if round.turn_owner.is_none() {
+    if round.turn_holder.is_none() {
         // no one has turn, end round
         round.push_back_command(RoundCommand::end_round());
     }
@@ -262,6 +267,6 @@ fn assign_turn_system(mut round:ResMut<Round>, tokens:Query<(Entity, &Token)>) {
 
 pub fn add_systems(app:&mut App) {
     app.add_systems(Startup, startup_system);
-    app.add_systems(Update, (execute_round_command_system, assign_initiative_system, assign_turn_system).chain());
+    app.add_systems(Update, (execute_round_command_system, assign_initiative_system, assign_turn_holder_system).chain());
     app.add_systems(PostUpdate, on_spawn_token_system);
 }
