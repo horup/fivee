@@ -4,7 +4,7 @@ use bevy::{
     prelude::*,
     utils::Instant,
 };
-use common::{CommonAssets, Grid, Round, RoundCommand, Selection, ShortLived, Token, Settings};
+use common::{CommonAssets, Grid, Round, RoundCommand, Selection, Settings, ShortLived, Token};
 
 use crate::{
     GridCursorEvent, HighlightedCell, TokenSelectedEvent, UIDebugFPS, Waypoint, WorldCursor, UI,
@@ -52,7 +52,7 @@ fn camera_system(
     mut camera: Query<(&mut Camera3d, &mut Transform)>,
     time: Res<Time>,
     mut mouse_wheel: EventReader<MouseWheel>,
-    settings:Res<Settings>
+    settings: Res<Settings>,
 ) {
     let (_amera, mut transform) = camera.single_mut();
     let dt = time.delta_seconds();
@@ -76,11 +76,10 @@ fn camera_system(
     let mut v = look_at - transform.translation;
     let vz = v.z;
     v.z = 0.0;
-    let mut v = Quat::from_rotation_z( r * dt) * v;
+    let mut v = Quat::from_rotation_z(r * dt) * v;
     v.z = vz;
     transform.translation = look_at - v;
     transform.look_at(look_at, Vec3::Z);
-
 
     // zoom camera
     let mut zoom_delta = 0.0;
@@ -93,7 +92,7 @@ fn camera_system(
     let min_zoom = 100.0;
     if v.z > max_zoom && v.z < min_zoom {
         transform.translation = v;
-    } 
+    }
 
     // pan camera
     let zoom_factor = v.z / 6.0;
@@ -180,7 +179,7 @@ fn cursor_changed_system(
     }
 }
 
-fn ray_plane_intersection(ray:Ray) -> Option<Vec3> {
+fn ray_plane_intersection(ray: Ray) -> Option<Vec3> {
     let n = Vec3::new(0.0, 0.0, 1.0);
     let denom = n.dot(ray.direction);
     if denom.abs() > 0.001 {
@@ -357,6 +356,17 @@ fn waypoint_system(
     }
 }
 
+fn action_system(ui: Res<UI>, mut round: ResMut<Round>, keys: Res<Input<KeyCode>>) {
+    if round.is_executing() {
+        return;
+    }
+    if let Some(entity) = ui.selected_entity {
+        if keys.just_pressed(KeyCode::Space) {
+            round.push_back_command(RoundCommand::give_turn(entity));
+        }
+    }
+}
+
 pub fn add_systems(app: &mut App) {
     app.add_systems(Startup, startup_system);
     app.add_systems(
@@ -368,6 +378,7 @@ pub fn add_systems(app: &mut App) {
             entity_selected_system,
             highlight_system,
             waypoint_system,
+            action_system,
         )
             .chain(),
     );

@@ -25,11 +25,8 @@
                 <mxCell id="5" value="plugin_game" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="550" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="17" value="improve scroll zooming by zoom factor" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-120" y="360" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="18" value="TODO" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="-390" y="255" width="60" height="30" as="geometry"/>
+                <mxCell id="18" value="BACKLOG" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-400" y="255" width="80" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="19" value="NEXT" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="-240" y="255" width="60" height="30" as="geometry"/>
@@ -43,26 +40,26 @@
                 <mxCell id="21" value="plugin_ui" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="710" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="24" value="improve panning by zoom factor" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-120" y="290" width="120" height="60" as="geometry"/>
-                </mxCell>
                 <mxCell id="33" value="implement spring camera" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="430" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-420" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="35" value="implement round management" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="710" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-270" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="36" value="implement resources like movement" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="640" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-420" y="360" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="37" value="implement pan to selected" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="780" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-420" y="500" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="38" value="improve walls such they are walls and not blocks" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="850" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-420" y="570" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="39" value="fix diagnoal moving through wall" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="920" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-420" y="640" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="implement player support" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="-420" y="710" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

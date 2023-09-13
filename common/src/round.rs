@@ -1,4 +1,4 @@
-use bevy::prelude::{Entity, Resource};
+use bevy::{prelude::{Entity, Resource}, utils::HashMap};
 use glam::IVec2;
 use std::collections::VecDeque;
 
@@ -6,6 +6,7 @@ pub enum Variant {
     Nop,
     MoveTo { who: Entity, to: IVec2 },
     MoveFar { who: Entity, to: IVec2 },
+    GiveTurn { who: Entity },
 }
 
 impl Default for Variant {
@@ -45,6 +46,13 @@ impl RoundCommand {
             ..Default::default()
         }
     }
+
+    pub fn give_turn(who: Entity) -> Self {
+        Self {
+            variant: Variant::GiveTurn { who },
+            ..Default::default()
+        }
+    }
     pub fn alpha(&self) -> f32 {
         if self.timer == 0.0 {
             return 1.0;
@@ -63,6 +71,9 @@ impl RoundCommand {
 #[derive(Resource, Default)]
 pub struct Round {
     commands: VecDeque<RoundCommand>,
+    pub turn_owner: Option<Entity>,
+    pub initiative_order: Vec<Entity>,
+    pub has_taken_turn: HashMap<Entity, ()>,
 }
 
 impl Round {
