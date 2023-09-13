@@ -26,7 +26,7 @@
                     <mxGeometry x="550" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="17" value="improve scroll zooming by zoom factor" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="290" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-120" y="360" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="18" value="TODO" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="-390" y="255" width="60" height="30" as="geometry"/>
@@ -44,7 +44,7 @@
                     <mxGeometry x="710" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="24" value="improve panning by zoom factor" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="360" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-120" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="33" value="implement spring camera" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="430" width="120" height="60" as="geometry"/>
@@ -63,9 +63,6 @@
                 </mxCell>
                 <mxCell id="39" value="fix diagnoal moving through wall" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="920" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="40" value="fix pan when rotated" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="-120" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

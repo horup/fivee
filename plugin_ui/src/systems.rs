@@ -81,7 +81,22 @@ fn camera_system(
     transform.translation = look_at - v;
     transform.look_at(look_at, Vec3::Z);
 
+
+    // zoom camera
+    let mut zoom_delta = 0.0;
+    for ev in mouse_wheel.iter() {
+        zoom_delta += ev.y * settings.zoom_speed;
+    }
+
+    let v = transform.translation + transform.forward() * zoom_delta;
+    let max_zoom = 5.0;
+    let min_zoom = 100.0;
+    if v.z > max_zoom && v.z < min_zoom {
+        transform.translation = v;
+    } 
+
     // pan camera
+    let zoom_factor = v.z / 6.0;
     let mut v = Vec2::new(0.0, 0.0);
     let forward = transform.forward().truncate().normalize_or_zero();
     let side = Vec2::new(-forward.y, forward.x);
@@ -98,21 +113,8 @@ fn camera_system(
         v -= forward;
     }
 
-    let v = v * settings.pan_speed * dt;
+    let v = v * settings.pan_speed * zoom_factor * dt;
     transform.translation += v.extend(0.0);
-
-    // zoom camera
-    let mut zoom_delta = 0.0;
-    for ev in mouse_wheel.iter() {
-        zoom_delta += ev.y * settings.zoom_speed;
-    }
-
-    let v = transform.translation + transform.forward() * zoom_delta;
-    let max_zoom = 5.0;
-    let min_zoom = 100.0;
-    if v.z > max_zoom && v.z < min_zoom {
-        transform.translation = v;
-    } 
 }
 
 fn debug_system(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, With<UIDebugFPS>>) {
