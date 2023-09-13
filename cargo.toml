@@ -1,5 +1,5 @@
 [workspace]
-members = ['fivee', 'common', 'plugin_ui', 'plugin_game', 'plugin_assets', 'rules']
+members = ['fivee', 'common', 'plugin_ui', 'plugin_game', 'plugin_assets', 'rules', 'plugin_ai']
 resolver = "2"
 
 [profile.dev]

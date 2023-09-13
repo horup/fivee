@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use common::{CommonAssets, Grid, Round, RoundCommand, Token};
+use common::{CommonAssets, Grid, Round, RoundCommand, Token, Player};
 use mapgen::{AreaStartingPosition, BspRooms, MapBuilder, SimpleRooms, XStart, YStart};
 use rand::{rngs::StdRng, SeedableRng};
 
@@ -64,6 +64,9 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
 
     // spawn player
     let p = mapbuffer.starting_point.expect("no starting point found");
+    let player = commands.spawn(Player {
+        name: "Player One".into()
+    }).id();
     let e = commands
         .spawn(Token {
             name:"Player".into(),
@@ -72,6 +75,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
                 x: p.x as i32,
                 y: p.y as i32,
             },
+            player:Some(player),
         })
         .id();
 
@@ -91,6 +95,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
             x: p.x as i32 + 2,
             y: p.y as i32 + 2,
         },
+        player:None
     });
 }
 

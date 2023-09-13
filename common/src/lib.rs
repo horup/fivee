@@ -11,6 +11,8 @@ mod short_lived;
 pub use short_lived::*;
 mod settings;
 pub use settings::*;
+mod player;
+pub use player::*;
 
 mod selection;
 pub use selection::*;

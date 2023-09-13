@@ -9,6 +9,7 @@ pub struct UITurnOwnerName;
 
 #[derive(Resource, Default)]
 pub struct UI {
+    pub player:Option<Entity>,
     pub selected_entity:Option<Entity>,
     pub grid_cursor:IVec2
 }

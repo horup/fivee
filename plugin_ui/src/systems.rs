@@ -2,7 +2,6 @@ use bevy::{
     diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin},
     input::mouse::MouseWheel,
     prelude::*,
-    utils::Instant,
 };
 use common::{CommonAssets, Grid, Round, RoundCommand, Selection, Settings, ShortLived, Token};
 
