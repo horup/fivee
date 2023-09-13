@@ -4,7 +4,7 @@ use bevy::{
     prelude::*,
     utils::Instant,
 };
-use common::{CommonAssets, Grid, Round, RoundCommand, Selection, ShortLived, Token};
+use common::{CommonAssets, Grid, Round, RoundCommand, Selection, ShortLived, Token, Settings};
 
 use crate::{
     GridCursorEvent, HighlightedCell, TokenSelectedEvent, UIDebugFPS, Waypoint, WorldCursor, UI,
@@ -52,17 +52,18 @@ fn camera_system(
     mut camera: Query<(&mut Camera3d, &mut Transform)>,
     time: Res<Time>,
     mut mouse_wheel: EventReader<MouseWheel>,
+    settings:Res<Settings>
 ) {
     let (_amera, mut transform) = camera.single_mut();
     let dt = time.delta_seconds();
 
     // rotate camera
     let mut r = 0.0;
-    if keys.pressed(KeyCode::Q) {
-        r -= 1.0;
+    if keys.pressed(settings.rotate_left) {
+        r -= settings.rotate_speed;
     }
-    if keys.pressed(KeyCode::E) {
-        r += 1.0;
+    if keys.pressed(settings.rotate_right) {
+        r += settings.rotate_speed;
     }
     let forward = transform.forward();
     let ray = Ray {
@@ -84,28 +85,26 @@ fn camera_system(
     let mut v = Vec2::new(0.0, 0.0);
     let forward = transform.forward().truncate().normalize_or_zero();
     let side = Vec2::new(-forward.y, forward.x);
-    if keys.pressed(KeyCode::A) {
+    if keys.pressed(settings.pan_left) {
         v += side;
     }
-    if keys.pressed(KeyCode::D) {
+    if keys.pressed(settings.pan_right) {
         v -= side;
     }
-    if keys.pressed(KeyCode::W) {
+    if keys.pressed(settings.pan_up) {
         v += forward;
     }
-    if keys.pressed(KeyCode::S) {
+    if keys.pressed(settings.pan_down) {
         v -= forward;
     }
 
-    let pan_speed = 10.0;
-    let v = v * pan_speed * dt;
+    let v = v * settings.pan_speed * dt;
     transform.translation += v.extend(0.0);
 
     // zoom camera
     let mut zoom_delta = 0.0;
     for ev in mouse_wheel.iter() {
-        let sy = ev.y;
-        zoom_delta += ev.y;
+        zoom_delta += ev.y * settings.zoom_speed;
     }
 
     let v = transform.translation + transform.forward() * zoom_delta;
