@@ -43,9 +43,6 @@
                 <mxCell id="33" value="implement spring camera" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="35" value="implement round management" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-270" y="290" width="120" height="60" as="geometry"/>
-                </mxCell>
                 <mxCell id="36" value="implement resources like movement" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="360" width="120" height="60" as="geometry"/>
                 </mxCell>
@@ -58,7 +55,10 @@
                 <mxCell id="39" value="fix diagnoal moving through wall" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="640" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="41" value="implement player support" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="41" value="implement player support" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-270" y="290" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="42" value="implement auto select of turn holder, but only for player" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
                     <mxGeometry x="-420" y="710" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>
