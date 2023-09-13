@@ -3,6 +3,9 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct UIDebugFPS;
 
+#[derive(Component)]
+pub struct UITurnOwnerName;
+
 
 #[derive(Resource, Default)]
 pub struct UI {

@@ -7,7 +7,7 @@ use bevy::{
 use common::{CommonAssets, Grid, Round, RoundCommand, Selection, Settings, ShortLived, Token};
 
 use crate::{
-    GridCursorEvent, HighlightedCell, TokenSelectedEvent, UIDebugFPS, Waypoint, WorldCursor, UI,
+    GridCursorEvent, HighlightedCell, TokenSelectedEvent, UIDebugFPS, Waypoint, WorldCursor, UI, UITurnOwnerName,
 };
 
 fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
@@ -17,6 +17,7 @@ fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
         ..default()
     });
 
+    // spawn debug
     let font = common_assets.font("default");
     commands
         .spawn(
@@ -45,6 +46,30 @@ fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
             ..Default::default()
         })
         .insert(WorldCursor::default());
+
+
+    // spawn turn owner name
+    let font = common_assets.font("default");
+    commands
+        .spawn(
+            TextBundle::from_section(
+                "---",
+                TextStyle {
+                    font: font.clone(),
+                    font_size: 32.0,
+                    color: Color::WHITE,
+                },
+            )
+            .with_text_alignment(TextAlignment::Center)
+            .with_style(Style {
+                width: Val::Percent(100.0),
+                position_type: PositionType::Absolute,
+                left:Val::Percent(50.0),
+                top: Val::Px(5.0),
+                ..default()
+            }),
+        )
+        .insert(UITurnOwnerName);
 }
 
 fn camera_system(
@@ -116,7 +141,7 @@ fn camera_system(
     transform.translation += v.extend(0.0);
 }
 
-fn debug_system(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, With<UIDebugFPS>>) {
+fn update_debug_system(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, With<UIDebugFPS>>) {
     for mut text in &mut query {
         if let Some(fps_diagnostics) = diagnostics.get(FrameTimeDiagnosticsPlugin::FPS) {
             text.sections[0].value =
@@ -367,6 +392,16 @@ fn action_system(ui: Res<UI>, mut round: ResMut<Round>, keys: Res<Input<KeyCode>
     }
 }
 
+fn update_turn_owner_name_system(round: Res<Round>, tokens:Query<&Token>, mut turn_owner_name:Query<&mut Text, With<UITurnOwnerName>>) {
+    let mut turn_owner_name = turn_owner_name.single_mut();
+    turn_owner_name.sections[0].value = "".into();
+    if let Some(turn_owner) = round.turn_owner {
+        if let Ok(turn_owner) = tokens.get(turn_owner) {
+            turn_owner_name.sections[0].value = turn_owner.name.clone();
+        }
+    }
+}
+
 pub fn add_systems(app: &mut App) {
     app.add_systems(Startup, startup_system);
     app.add_systems(
@@ -379,8 +414,9 @@ pub fn add_systems(app: &mut App) {
             highlight_system,
             waypoint_system,
             action_system,
+            update_turn_owner_name_system
         )
             .chain(),
     );
-    app.add_systems(PostUpdate, debug_system);
+    app.add_systems(PostUpdate, update_debug_system);
 }

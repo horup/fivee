@@ -5,6 +5,7 @@ use glam::*;
 pub struct Token {
     pub color:Color,
     pub grid_pos:IVec2, 
+    pub name:String
 }
 
 impl Token {

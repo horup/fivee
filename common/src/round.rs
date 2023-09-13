@@ -7,6 +7,7 @@ pub enum Variant {
     MoveTo { who: Entity, to: IVec2 },
     MoveFar { who: Entity, to: IVec2 },
     GiveTurn { who: Entity },
+    EndRound {}
 }
 
 impl Default for Variant {
@@ -53,6 +54,10 @@ impl RoundCommand {
             ..Default::default()
         }
     }
+
+    pub fn end_round() -> Self {
+        Self {timer:1.0, variant:Variant::EndRound {  }, ..Default::default()}
+    }
     pub fn alpha(&self) -> f32 {
         if self.timer == 0.0 {
             return 1.0;
@@ -74,6 +79,7 @@ pub struct Round {
     pub turn_owner: Option<Entity>,
     pub initiative_order: Vec<Entity>,
     pub has_taken_turn: HashMap<Entity, ()>,
+    pub round_num:u64
 }
 
 impl Round {

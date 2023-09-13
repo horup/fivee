@@ -3,7 +3,7 @@ use common::{CommonAssets, Grid, Round, RoundCommand, Token};
 use mapgen::{AreaStartingPosition, BspRooms, MapBuilder, SimpleRooms, XStart, YStart};
 use rand::{rngs::StdRng, SeedableRng};
 
-pub fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResMut<Round>) {
+fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResMut<Round>) {
     let mut rng: StdRng = SeedableRng::seed_from_u64(0);
     let map_size = 64;
     let mapbuffer = MapBuilder::new(map_size, map_size)
@@ -66,6 +66,7 @@ pub fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: 
     let p = mapbuffer.starting_point.expect("no starting point found");
     let e = commands
         .spawn(Token {
+            name:"Player".into(),
             color: Color::BLUE,
             grid_pos: IVec2 {
                 x: p.x as i32,
@@ -84,6 +85,7 @@ pub fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: 
 
     // spawn a goblin
     commands.spawn(Token {
+        name:"Goblin".into(),
         color: Color::RED,
         grid_pos: IVec2 {
             x: p.x as i32 + 2,
@@ -92,7 +94,7 @@ pub fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: 
     });
 }
 
-pub fn on_spawn_token_system(
+fn on_spawn_token_system(
     mut commands: Commands,
     q: Query<(Entity, &Token), Added<Token>>,
     sa: Res<CommonAssets>,
@@ -111,7 +113,7 @@ pub fn on_spawn_token_system(
     }
 }
 
-pub fn update_round_command(
+fn update_round_command(
     command: &mut RoundCommand,
     round: &mut ResMut<Round>,
     _time: &Res<Time>,
@@ -141,10 +143,11 @@ pub fn update_round_command(
         }
         common::Variant::MoveFar { who, to } => {}
         common::Variant::GiveTurn { who } => {}
+        common::Variant::EndRound {  } => {},
     }
 }
 
-pub fn finish_round_command(
+fn finish_round_command(
     command: RoundCommand,
     round: &mut ResMut<Round>,
     _time: &Res<Time>,
@@ -178,10 +181,15 @@ pub fn finish_round_command(
                 round.has_taken_turn.insert(who, ());
             }
         }
+        common::Variant::EndRound {  } => {
+            round.has_taken_turn.clear();
+            round.round_num += 1;
+            dbg!("new round");
+        },
     }
 }
 
-pub fn update_round_system(
+fn execute_round_command_system(
     mut round: ResMut<Round>,
     time: Res<Time>,
     mut tokens: Query<&mut Token>,
@@ -213,11 +221,47 @@ pub fn update_round_system(
     }
 }
 
-pub struct PluginGame;
-impl Plugin for PluginGame {
-    fn build(&self, app: &mut App) {
-        app.add_systems(Startup, startup_system);
-        app.add_systems(Update, update_round_system);
-        app.add_systems(PostUpdate, on_spawn_token_system);
+fn assign_initiative_system(mut round: ResMut<Round>, tokens:Query<(Entity, &Token)>) {
+    if round.is_executing() {
+        return;
     }
+
+    // push missing to order
+    for (e, _token) in tokens.iter() {
+        if round.initiative_order.contains(&e) == false {
+            round.initiative_order.push(e);
+            round.has_taken_turn.insert(e, ());
+        }
+    }
+
+    // cleanup deleted from the order
+    let mut initiative_order = std::mem::take(&mut round.initiative_order);
+    for e in initiative_order.drain(..) {
+        if tokens.contains(e) {
+            round.initiative_order.push(e);
+        }
+    }
+}
+
+fn assign_turn_system(mut round:ResMut<Round>, tokens:Query<(Entity, &Token)>) {
+
+    if round.is_executing() {
+        return;
+    }
+
+    if round.turn_owner.is_none() {
+        // no one has turn, give the turn to someone
+    }
+
+    if round.turn_owner.is_none() {
+        // no one has turn, end round
+        round.push_back_command(RoundCommand::end_round());
+    }
+}
+
+
+pub fn add_systems(app:&mut App) {
+    app.add_systems(Startup, startup_system);
+    app.add_systems(Update, (execute_round_command_system, assign_initiative_system, assign_turn_system).chain());
+    app.add_systems(PostUpdate, on_spawn_token_system);
 }
