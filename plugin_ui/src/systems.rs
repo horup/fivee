@@ -3,7 +3,7 @@ use bevy::{
     input::mouse::MouseWheel,
     prelude::*,
 };
-use common::{CommonAssets, Grid, Round, RoundCommand, Selection, Settings, ShortLived, Token};
+use common::{CommonAssets, Grid, Round, RoundCommand, Selection, Settings, ShortLived, Token, Player};
 
 use crate::{
     GridCursorEvent, HighlightedCell, TokenSelectedEvent, UIDebugFPS, Waypoint, WorldCursor, UI, UITurnOwnerName,
@@ -48,8 +48,16 @@ fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
 
 
     // spawn turn owner name
-    let font = common_assets.font("default");
-    commands
+    commands.spawn(NodeBundle {
+        style: Style {
+            width: Val::Percent(100.),
+            flex_direction: FlexDirection::Column,
+            align_items: AlignItems::Center,
+            ..Default::default()
+        },
+        ..Default::default()
+    }).with_children(|builder|{
+        builder
         .spawn(
             TextBundle::from_section(
                 "---",
@@ -59,16 +67,15 @@ fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
                     color: Color::WHITE,
                 },
             )
-            .with_text_alignment(TextAlignment::Center)
             .with_style(Style {
-                width: Val::Percent(100.0),
-                position_type: PositionType::Absolute,
-                left:Val::Percent(50.0),
                 top: Val::Px(5.0),
+                justify_content:JustifyContent::Center,
                 ..default()
-            }),
+            })
+            .with_text_alignment(TextAlignment::Center),
         )
         .insert(UITurnOwnerName);
+    });
 }
 
 fn camera_system(
@@ -393,7 +400,7 @@ fn action_system(ui: Res<UI>, mut round: ResMut<Round>, keys: Res<Input<KeyCode>
 
 fn update_turn_owner_name_system(round: Res<Round>, tokens:Query<&Token>, mut turn_owner_name:Query<&mut Text, With<UITurnOwnerName>>) {
     let mut turn_owner_name = turn_owner_name.single_mut();
-    turn_owner_name.sections[0].value = "".into();
+    turn_owner_name.sections[0].value = "--- No one has the turn ---".into();
     if let Some(turn_owner) = round.turn_holder {
         if let Ok(turn_owner) = tokens.get(turn_owner) {
             turn_owner_name.sections[0].value = turn_owner.name.clone();
@@ -401,11 +408,18 @@ fn update_turn_owner_name_system(round: Res<Round>, tokens:Query<&Token>, mut tu
     }
 }
 
+
+fn ensure_player_system(q:Query<Entity, With<Player>>, mut ui:ResMut<UI>) {
+    let e = q.single();
+    ui.player = Some(e);
+}
+
 pub fn add_systems(app: &mut App) {
     app.add_systems(Startup, startup_system);
     app.add_systems(
         Update,
         (
+            ensure_player_system,
             camera_system,
             cursor_changed_system,
             grid_cursor_system,

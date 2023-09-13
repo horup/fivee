@@ -62,14 +62,14 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
         brightness: 1.0,
     });
 
-    // spawn player
+    // spawn player one
     let p = mapbuffer.starting_point.expect("no starting point found");
     let player = commands.spawn(Player {
         name: "Player One".into()
     }).id();
     let e = commands
         .spawn(Token {
-            name:"Player".into(),
+            name:"Mighty Warrior".into(),
             color: Color::BLUE,
             grid_pos: IVec2 {
                 x: p.x as i32,
