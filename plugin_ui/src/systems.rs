@@ -3,10 +3,12 @@ use bevy::{
     input::mouse::MouseWheel,
     prelude::*,
 };
-use common::{CommonAssets, Grid, Round, RoundCommand, Selection, Settings, ShortLived, Token, Player};
+use common::{
+    CommonAssets, Grid, Player, Round, RoundCommand, Selection, Settings, ShortLived, Token,
+};
 
 use crate::{
-    GridCursorEvent, HighlightedCell, TokenSelectedEvent, UIDebugFPS, Waypoint, WorldCursor, UI, UITurnOwnerName,
+    GridCursorEvent, HighlightedCell, UIDebugFPS, UITurnOwnerName, Waypoint, WorldCursor, UI,
 };
 
 fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
@@ -46,36 +48,37 @@ fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
         })
         .insert(WorldCursor::default());
 
-
     // spawn turn owner name
-    commands.spawn(NodeBundle {
-        style: Style {
-            width: Val::Percent(100.),
-            flex_direction: FlexDirection::Column,
-            align_items: AlignItems::Center,
+    commands
+        .spawn(NodeBundle {
+            style: Style {
+                width: Val::Percent(100.),
+                flex_direction: FlexDirection::Column,
+                align_items: AlignItems::Center,
+                ..Default::default()
+            },
             ..Default::default()
-        },
-        ..Default::default()
-    }).with_children(|builder|{
-        builder
-        .spawn(
-            TextBundle::from_section(
-                "---",
-                TextStyle {
-                    font: font.clone(),
-                    font_size: 32.0,
-                    color: Color::WHITE,
-                },
-            )
-            .with_style(Style {
-                top: Val::Px(5.0),
-                justify_content:JustifyContent::Center,
-                ..default()
-            })
-            .with_text_alignment(TextAlignment::Center),
-        )
-        .insert(UITurnOwnerName);
-    });
+        })
+        .with_children(|builder| {
+            builder
+                .spawn(
+                    TextBundle::from_section(
+                        "---",
+                        TextStyle {
+                            font: font.clone(),
+                            font_size: 32.0,
+                            color: Color::WHITE,
+                        },
+                    )
+                    .with_style(Style {
+                        top: Val::Px(5.0),
+                        justify_content: JustifyContent::Center,
+                        ..default()
+                    })
+                    .with_text_alignment(TextAlignment::Center),
+                )
+                .insert(UITurnOwnerName);
+        });
 }
 
 fn camera_system(
@@ -147,7 +150,10 @@ fn camera_system(
     transform.translation += v.extend(0.0);
 }
 
-fn update_debug_system(diagnostics: Res<DiagnosticsStore>, mut query: Query<&mut Text, With<UIDebugFPS>>) {
+fn update_debug_system(
+    diagnostics: Res<DiagnosticsStore>,
+    mut query: Query<&mut Text, With<UIDebugFPS>>,
+) {
     for mut text in &mut query {
         if let Some(fps_diagnostics) = diagnostics.get(FrameTimeDiagnosticsPlugin::FPS) {
             text.sections[0].value =
@@ -226,7 +232,6 @@ fn grid_cursor_system(
     mut ui: ResMut<UI>,
     mut reader: EventReader<GridCursorEvent>,
     tokens: Query<(Entity, &Token)>,
-    mut writer: EventWriter<TokenSelectedEvent>,
     mut round: ResMut<Round>,
 ) {
     if round.is_executing() {
@@ -235,62 +240,41 @@ fn grid_cursor_system(
     for ev in reader.iter() {
         let grid_pos = ev.grid_pos;
         if ev.left_just_pressed {
-            let mut selected: Option<Entity> = None;
-            for (e, token) in tokens.iter() {
-                if token.grid_pos == grid_pos {
-                    selected = Some(e);
-                    break;
-                }
-            }
-
-            if let Some(selected) = selected {
-                if Some(selected) != ui.selected_entity {
-                    writer.send(TokenSelectedEvent {
-                        selected: Some(selected),
-                        deselected: ui.selected_entity,
-                    });
-                    ui.selected_entity = Some(selected);
-                }
-            } else if ui.selected_entity != None {
-                writer.send(TokenSelectedEvent {
-                    selected: None,
-                    deselected: ui.selected_entity,
-                });
-                ui.selected_entity = None;
-            }
-        }
-        if ev.right_just_pressed {
-            if let Some(selected_entity) = ui.selected_entity {
+            if let Some(selected_entity) = ui.selected_token {
                 round.push_front_command(RoundCommand::move_far(selected_entity, grid_pos))
             }
         }
     }
 }
 
-fn entity_selected_system(
+fn token_selected_system(
     mut commands: Commands,
-    mut reader: EventReader<TokenSelectedEvent>,
     ca: Res<CommonAssets>,
-    selections: Query<(Entity, &Selection)>,
+    mut selections: Query<(&Selection, &mut ShortLived)>,
     ui: Res<UI>,
 ) {
-    for ev in reader.iter() {
-        if let Some(e) = ev.selected {
+    if let Some(selected_token) = ui.selected_token {
+        let mut found = false;
+        for (selection, mut sl) in selections.iter_mut() {
+            if selection.entity == selected_token {
+                sl.despawn = false;
+                found = true;
+            }
+        }
+
+        if !found {
             let selected_e = commands
                 .spawn(PbrBundle {
                     mesh: ca.mesh("selector"),
                     material: ca.material("white"),
                     ..Default::default()
                 })
-                .insert(Selection { entity: e })
+                .insert(Selection {
+                    entity: selected_token,
+                })
+                .insert(ShortLived::default())
                 .id();
-            commands.entity(e).add_child(selected_e);
-        }
-    }
-
-    for (selection_entity, selection) in selections.iter() {
-        if Some(selection.entity) != ui.selected_entity {
-            commands.entity(selection_entity).despawn_recursive();
+            commands.entity(selected_token).add_child(selected_e);
         }
     }
 }
@@ -307,7 +291,7 @@ fn highlight_system(
     if round.is_executing() {
         return;
     }
-    if let Some(selected_entity) = ui.selected_entity {
+    if let Some(selected_entity) = ui.selected_token {
         if let Ok(token) = tokens.get(selected_entity) {
             let reachable_cells = rules::get_reachable_cells(token, &grid);
             for (i, _) in reachable_cells.iter() {
@@ -353,7 +337,7 @@ fn waypoint_system(
         return;
     }
 
-    if let Some(selected_entity) = ui.selected_entity {
+    if let Some(selected_entity) = ui.selected_token {
         if let Ok(token) = tokens.get(selected_entity) {
             let path = rules::get_path(token, &grid, ui.grid_cursor);
             for cell in path.iter() {
@@ -391,27 +375,47 @@ fn action_system(ui: Res<UI>, mut round: ResMut<Round>, keys: Res<Input<KeyCode>
     if round.is_executing() {
         return;
     }
-    if let Some(entity) = ui.selected_entity {
+    if let Some(entity) = ui.selected_token {
         if keys.just_pressed(KeyCode::Space) {
             round.push_back_command(RoundCommand::give_turn(entity));
         }
     }
 }
 
-fn update_turn_owner_name_system(round: Res<Round>, tokens:Query<&Token>, mut turn_owner_name:Query<&mut Text, With<UITurnOwnerName>>) {
+fn update_turn_owner_name_system(
+    round: Res<Round>,
+    tokens: Query<&Token>,
+    mut turn_owner_name: Query<&mut Text, With<UITurnOwnerName>>,
+) {
     let mut turn_owner_name = turn_owner_name.single_mut();
     turn_owner_name.sections[0].value = "--- No one has the turn ---".into();
-    if let Some(turn_owner) = round.turn_holder {
+    if let Some(turn_owner) = round.active_token {
         if let Ok(turn_owner) = tokens.get(turn_owner) {
             turn_owner_name.sections[0].value = turn_owner.name.clone();
         }
     }
 }
 
-
-fn ensure_player_system(q:Query<Entity, With<Player>>, mut ui:ResMut<UI>) {
+fn ensure_player_system(q: Query<Entity, With<Player>>, mut ui: ResMut<UI>) {
     let e = q.single();
     ui.player = Some(e);
+}
+
+fn select_my_active_token_system(round: Res<Round>, mut ui: ResMut<UI>, tokens: Query<&Token>) {
+    if round.is_executing() {
+        return;
+    }
+
+    ui.selected_token = None;
+    let Some(active_token) = round.active_token else {
+        return;
+    };
+    let Ok(token) = tokens.get(active_token) else {
+        return;
+    };
+    if token.player == ui.player {
+        ui.selected_token = Some(active_token);
+    }
 }
 
 pub fn add_systems(app: &mut App) {
@@ -420,14 +424,15 @@ pub fn add_systems(app: &mut App) {
         Update,
         (
             ensure_player_system,
+            select_my_active_token_system,
             camera_system,
             cursor_changed_system,
             grid_cursor_system,
-            entity_selected_system,
+            token_selected_system,
             highlight_system,
             waypoint_system,
             action_system,
-            update_turn_owner_name_system
+            update_turn_owner_name_system,
         )
             .chain(),
     );

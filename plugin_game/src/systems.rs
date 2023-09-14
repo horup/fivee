@@ -181,8 +181,8 @@ fn finish_round_command(
             }
         }
         common::Variant::GiveTurn { who } => {
-            if round.turn_holder == Some(who) {
-                round.turn_holder = None;
+            if round.active_token == Some(who) {
+                round.active_token = None;
                 round.has_taken_turn.insert(who, ());
             }
         }
@@ -253,17 +253,17 @@ fn assign_turn_holder_system(mut round:ResMut<Round>, tokens:Query<(Entity, &Tok
         return;
     }
 
-    if round.turn_holder.is_none() {
+    if round.active_token.is_none() {
         // no one has turn, give the turn to someone
         for e in round.initiative_order.iter() {
             if round.has_taken_turn.contains_key(e) == false {
-                round.turn_holder = Some(*e);
+                round.active_token = Some(*e);
                 break;
             }
         }
     }
 
-    if round.turn_holder.is_none() {
+    if round.active_token.is_none() {
         // no one has turn, end round
         round.push_back_command(RoundCommand::end_round());
     }

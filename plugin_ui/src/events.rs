@@ -7,9 +7,3 @@ pub struct GridCursorEvent {
     pub left_just_pressed: bool,
     pub right_just_pressed: bool,
 }
-
-#[derive(Event)]
-pub struct TokenSelectedEvent {
-    pub selected: Option<Entity>,
-    pub deselected: Option<Entity>,
-}
