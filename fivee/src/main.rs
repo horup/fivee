@@ -24,5 +24,6 @@ fn main() {
         .add_plugins(plugin_assets::PluginAssets)
         .add_plugins(plugin_ui::PluginUI)
         .add_plugins(plugin_game::PluginGame)
+        .add_plugins(plugin_ai::PluginAI)
         .run();
 }

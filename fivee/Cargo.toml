@@ -11,3 +11,4 @@ common = { path = "../common" }
 plugin_game = { path = "../plugin_game" }
 plugin_ui = { path = "../plugin_ui" }
 plugin_assets = { path = "../plugin_assets" }
+plugin_ai = { path = "../plugin_ai" }

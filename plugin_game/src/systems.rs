@@ -87,13 +87,23 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
         },
     ));
 
-    // spawn a goblin
+    // spawn a goblins
     commands.spawn(Token {
         name:"Goblin".into(),
         color: Color::RED,
         grid_pos: IVec2 {
             x: p.x as i32 + 2,
             y: p.y as i32 + 2,
+        },
+        player:None
+    });
+
+    commands.spawn(Token {
+        name:"Goblin".into(),
+        color: Color::RED,
+        grid_pos: IVec2 {
+            x: p.x as i32 + 4,
+            y: p.y as i32 + 3,
         },
         player:None
     });
@@ -188,6 +198,7 @@ fn finish_round_command(
         }
         common::Variant::EndRound {  } => {
             round.has_taken_turn.clear();
+            round.active_token = None;
             round.round_num += 1;
             dbg!("new round");
         },
