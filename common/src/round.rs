@@ -51,6 +51,7 @@ impl RoundCommand {
     pub fn give_turn(who: Entity) -> Self {
         Self {
             variant: Variant::GiveTurn { who },
+            timer:0.25,
             ..Default::default()
         }
     }

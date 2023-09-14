@@ -89,7 +89,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
 
     // spawn a goblins
     commands.spawn(Token {
-        name:"Goblin".into(),
+        name:"Goblin 1".into(),
         color: Color::RED,
         grid_pos: IVec2 {
             x: p.x as i32 + 2,
@@ -99,7 +99,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
     });
 
     commands.spawn(Token {
-        name:"Goblin".into(),
+        name:"Goblin 2".into(),
         color: Color::RED,
         grid_pos: IVec2 {
             x: p.x as i32 + 4,
@@ -184,8 +184,8 @@ fn finish_round_command(
             if let Ok(token) = tokens.get(who) {
                 let path = rules::get_path(token, &grid, to);
                 if path.len() > 0 {
-                    for p in path {
-                        round.push_back_command(RoundCommand::move_to(who, p.to));
+                    for p in path.iter().rev() {
+                        round.push_front_command(RoundCommand::move_to(who, p.to));
                     }
                 }
             }
@@ -200,7 +200,6 @@ fn finish_round_command(
             round.has_taken_turn.clear();
             round.active_token = None;
             round.round_num += 1;
-            dbg!("new round");
         },
     }
 }

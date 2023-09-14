@@ -388,7 +388,7 @@ fn update_turn_owner_name_system(
     mut turn_owner_name: Query<&mut Text, With<UITurnOwnerName>>,
 ) {
     let mut turn_owner_name = turn_owner_name.single_mut();
-    turn_owner_name.sections[0].value = "--- No one has the turn ---".into();
+    turn_owner_name.sections[0].value = format!("Round {}", round.round_num);
     if let Some(turn_owner) = round.active_token {
         if let Ok(turn_owner) = tokens.get(turn_owner) {
             turn_owner_name.sections[0].value = turn_owner.name.clone();

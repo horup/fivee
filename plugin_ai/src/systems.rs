@@ -64,5 +64,5 @@ fn think_system(
 }
 
 pub fn add_systems(app: &mut App) {
-    app.add_systems(Update, (add_remove_ai_system, think_system, timeout_system));
+    app.add_systems(Update, (add_remove_ai_system, timeout_system, think_system));
 }
