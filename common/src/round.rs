@@ -57,7 +57,7 @@ impl RoundCommand {
     }
 
     pub fn end_round() -> Self {
-        Self {timer:1.0, variant:Variant::EndRound {  }, ..Default::default()}
+        Self {timer:0.25, variant:Variant::EndRound {  }, ..Default::default()}
     }
     pub fn alpha(&self) -> f32 {
         if self.timer == 0.0 {
