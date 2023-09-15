@@ -4,6 +4,7 @@ use glam::*;
 #[derive(Component)]
 pub struct Token {
     pub color:Color,
+    pub image:String,
     pub grid_pos:IVec2, 
     pub name:String,
     pub player:Option<Entity>

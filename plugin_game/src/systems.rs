@@ -75,6 +75,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
                 x: p.x as i32,
                 y: p.y as i32,
             },
+            image:"images/token_william.png".into(),
             player:Some(player),
         })
         .id();
@@ -95,6 +96,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
             x: p.x as i32 + 2,
             y: p.y as i32 + 2,
         },
+        image:"images/token_goblin.png".into(),
         player:None
     });
 
@@ -105,6 +107,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
             x: p.x as i32 + 4,
             y: p.y as i32 + 3,
         },
+        image:"images/token_goblin.png".into(),
         player:None
     });
 }
@@ -114,13 +117,15 @@ fn on_spawn_token_system(
     q: Query<(Entity, &Token), Added<Token>>,
     sa: Res<CommonAssets>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    asset_server:Res<AssetServer>
 ) {
     for (e, token) in q.iter() {
         commands.entity(e).insert(PbrBundle {
             transform: Transform::from_translation(Token::pos(token.grid_pos)),
             mesh: sa.mesh("token"),
             material: materials.add(StandardMaterial {
-                base_color: token.color,
+              //  base_color: token.color,
+                base_color_texture:Some(asset_server.load(&token.image)),
                 ..Default::default()
             }),
             ..Default::default()
