@@ -1,4 +1,4 @@
-use bevy::prelude::{Entity, Event, IVec2};
+use bevy::prelude::{Event, IVec2};
 
 #[derive(Event)]
 pub struct GridCursorEvent {

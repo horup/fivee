@@ -3,7 +3,7 @@ use common::{CommonAssets, Grid, Round, RoundCommand, Token, Player, GameEvent};
 use mapgen::{AreaStartingPosition, BspRooms, MapBuilder, SimpleRooms, XStart, YStart};
 use rand::{rngs::StdRng, SeedableRng};
 
-fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResMut<Round>) {
+fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<Round>) {
     let mut rng: StdRng = SeedableRng::seed_from_u64(0);
     let map_size = 64;
     let mapbuffer = MapBuilder::new(map_size, map_size)
@@ -67,7 +67,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
     let player = commands.spawn(Player {
         name: "Player One".into()
     }).id();
-    let e = commands
+    let _e = commands
         .spawn(Token {
             name:"William".into(),
             color: Color::BLUE,
@@ -79,7 +79,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
             player:Some(player),
         })
         .id();
-    let e = commands
+    let _e = commands
         .spawn(Token {
             name:"Viktor".into(),
             color: Color::BLUE,
@@ -139,7 +139,7 @@ fn on_spawn_token_system(
 
 fn update_round_command(
     command: &mut RoundCommand,
-    round: &mut ResMut<Round>,
+    _round: &mut ResMut<Round>,
     _time: &Res<Time>,
     tokens: &mut Query<&mut Token>,
     transforms: &mut Query<&mut Transform>,
@@ -165,8 +165,8 @@ fn update_round_command(
                 }
             }
         }
-        common::Variant::MoveFar { who, to } => {}
-        common::Variant::GiveTurn { who } => {}
+        common::Variant::MoveFar { who: _, to: _ } => {}
+        common::Variant::GiveTurn { who: _ } => {}
         common::Variant::EndRound {  } => {},
     }
 }
@@ -267,7 +267,7 @@ fn assign_initiative_system(mut round: ResMut<Round>, tokens:Query<(Entity, &Tok
     }
 }
 
-fn assign_active_entity_system(mut round:ResMut<Round>, tokens:Query<(Entity, &Token)>, mut ge:EventWriter<GameEvent>) {
+fn assign_active_entity_system(mut round:ResMut<Round>, _tokens:Query<(Entity, &Token)>, mut ge:EventWriter<GameEvent>) {
     if round.is_executing() {
         return;
     }

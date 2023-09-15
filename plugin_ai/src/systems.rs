@@ -50,7 +50,7 @@ fn think_system(
         return;
     };
 
-    let Ok(mut active_ai) = ais.get_mut(entity) else {
+    let Ok(_active_ai) = ais.get_mut(entity) else {
         return;
     };
 

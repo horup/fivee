@@ -3,7 +3,7 @@ use std::f32::consts::PI;
 use bevy::{
     diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin},
     input::mouse::MouseWheel,
-    prelude::*, ecs::query::Has,
+    prelude::*,
 };
 use common::{
     CommonAssets, GameEvent, Grid, Player, Round, RoundCommand, Selection, Settings, ShortLived,
@@ -242,9 +242,9 @@ fn ray_plane_intersection(ray: Ray) -> Option<Vec3> {
 }
 
 fn grid_cursor_system(
-    mut ui: ResMut<UI>,
+    ui: ResMut<UI>,
     mut reader: EventReader<GridCursorEvent>,
-    tokens: Query<(Entity, &Token)>,
+    _tokens: Query<(Entity, &Token)>,
     mut round: ResMut<Round>,
 ) {
     if round.is_executing() {
@@ -339,7 +339,7 @@ fn highlight_system(
 
 fn waypoint_system(
     mut commands: Commands,
-    tokens: Query<(&Token)>,
+    tokens: Query<&Token>,
     ui: Res<UI>,
     mut waypoints: Query<(&Waypoint, &mut ShortLived)>,
     grid: Res<Grid>,
@@ -451,7 +451,7 @@ pub fn pan_to_active_entity_system(
 
     let Some(pan_to) = pan_to else { return };
     let mut camera: (Entity, &Camera, Mut<'_, Cam>) = cameras.single_mut();
-    let mut camera_transform = transforms.get_mut(camera.0).unwrap();
+    let camera_transform = transforms.get_mut(camera.0).unwrap();
 
     let ray = Ray {
         origin: camera_transform.translation,
@@ -474,7 +474,7 @@ fn token_faces_camera_system(mut transforms:Query<&mut Transform>, cameras:Query
 
     for token in tokens.iter() {
         if let Ok(mut token_transform) = transforms.get_mut(token) {
-            let v = (camera_transform.translation.truncate() - token_transform.translation.truncate()).normalize_or_zero();
+            let _v = (camera_transform.translation.truncate() - token_transform.translation.truncate()).normalize_or_zero();
             let mut q = camera_transform.rotation.clone();
             q.y = 0.0;
             q.x = 0.0;

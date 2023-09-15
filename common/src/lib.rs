@@ -41,7 +41,7 @@ fn kill_system(mut commands:Commands, q:Query<(Entity, &ShortLived)>) {
     }
 }
 
-fn age_system(mut commands:Commands, mut q:Query<&mut ShortLived>) {
+fn age_system(_commands:Commands, mut q:Query<&mut ShortLived>) {
     for mut s in q.iter_mut() {
         s.despawn = true;
     }

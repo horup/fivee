@@ -1,4 +1,4 @@
-use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, window::PresentMode, render::{RenderPlugin, settings::{WgpuSettings, Backends}}};
+use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, window::PresentMode, render::{RenderPlugin, settings::{WgpuSettings}}};
 
 fn main() {
     App::new()
