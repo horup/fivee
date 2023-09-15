@@ -69,7 +69,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
     }).id();
     let e = commands
         .spawn(Token {
-            name:"Mighty Warrior".into(),
+            name:"William".into(),
             color: Color::BLUE,
             grid_pos: IVec2 {
                 x: p.x as i32,
@@ -79,14 +79,18 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, mut round: ResM
             player:Some(player),
         })
         .id();
-
-    round.push_front_command(RoundCommand::move_to(
-        e,
-        IVec2 {
-            x: p.x as i32 + 1,
-            y: p.y as i32,
-        },
-    ));
+    let e = commands
+        .spawn(Token {
+            name:"Viktor".into(),
+            color: Color::BLUE,
+            grid_pos: IVec2 {
+                x: p.x as i32 + 1,
+                y: p.y as i32,
+            },
+            image:"images/token_viktor.png".into(),
+            player:Some(player),
+        })
+        .id();
 
     // spawn a goblins
     commands.spawn(Token {

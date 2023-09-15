@@ -1,7 +1,9 @@
+use std::f32::consts::PI;
+
 use bevy::{
     diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin},
     input::mouse::MouseWheel,
-    prelude::*,
+    prelude::*, ecs::query::Has,
 };
 use common::{
     CommonAssets, GameEvent, Grid, Player, Round, RoundCommand, Selection, Settings, ShortLived,
@@ -382,18 +384,19 @@ fn waypoint_system(
     }
 }
 
-fn action_system(ui: Res<UI>, mut round: ResMut<Round>, keys: Res<Input<KeyCode>>) {
+fn action_system(mut ui: ResMut<UI>, mut round: ResMut<Round>, keys: Res<Input<KeyCode>>) {
     if round.is_executing() {
         return;
     }
     if let Some(entity) = ui.selected_token {
         if keys.just_pressed(KeyCode::Space) {
             round.push_back_command(RoundCommand::give_turn(entity));
+            ui.selected_token = None;
         }
     }
 }
 
-fn update_turn_owner_name_system(
+fn update_active_entity_name_system(
     round: Res<Round>,
     tokens: Query<&Token>,
     mut turn_owner_name: Query<&mut Text, With<UITurnOwnerName>>,
@@ -465,6 +468,30 @@ pub fn pan_to_active_entity_system(
 
 }
 
+fn token_faces_camera_system(mut transforms:Query<&mut Transform>, cameras:Query<Entity, With<Camera>>, tokens:Query<Entity, With<Token>>) {
+    let camera_entity = cameras.single();
+    let camera_transform = transforms.get(camera_entity).unwrap().clone();
+
+    for token in tokens.iter() {
+        if let Ok(mut token_transform) = transforms.get_mut(token) {
+            let v = (camera_transform.translation.truncate() - token_transform.translation.truncate()).normalize_or_zero();
+            let mut q = camera_transform.rotation.clone();
+            q.y = 0.0;
+            q.x = 0.0;
+            token_transform.rotation = q;
+            token_transform.rotate_z(PI);
+        }
+    }
+    /*let (_, camera_transform) = set.p1().single();
+    let camera_transform = camera_transform.clone();
+    for (_, mut transform) in set.p0().iter_mut() {
+        let v = (camera_transform.translation.truncate() - transform.translation.truncate()).normalize_or_zero();
+        if v.length() > 0.0 {
+            transform.rotation = camera_transform.rotation;
+        }
+    }*/
+}
+
 pub fn add_systems(app: &mut App) {
     app.add_systems(Startup, startup_system);
     app.add_systems(
@@ -480,7 +507,8 @@ pub fn add_systems(app: &mut App) {
             highlight_system,
             waypoint_system,
             action_system,
-            update_turn_owner_name_system,
+            update_active_entity_name_system,
+            token_faces_camera_system
         )
             .chain(),
     );
