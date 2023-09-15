@@ -15,7 +15,7 @@ use crate::{
 fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
     // spawn camera
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(5.0, 0.0, 8.0).looking_at(Vec3::new(5.0, 8.0, 0.0), Vec3::Y),
+        transform: Transform::from_xyz(5.0, 0.0, 8.0).looking_at(Vec3::new(5.0, 5.0, 0.0), Vec3::Y),
         ..default()
     }).insert(Cam::default());
 
@@ -134,7 +134,7 @@ fn camera_transform_system(
             cam.auto_pan = None;
         } else {
             auto_pan.alpha += dt * settings.pan_speed;
-            let p = (auto_pan.to - auto_pan.from) * auto_pan.alpha + auto_pan.from;
+            let p = (auto_pan.to - auto_pan.from) * common::math::smootherstep(0.0, 1.0, auto_pan.alpha) + auto_pan.from;
             transform.translation = p;
         }
     } else {
