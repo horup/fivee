@@ -10,7 +10,8 @@ pub struct Settings {
     pub pan_down: KeyCode,
     pub rotate_left: KeyCode,
     pub rotate_right: KeyCode,
-    pub rotate_speed:f32
+    pub rotate_speed:f32,
+    pub auto_pan_speed:f32
 }
 
 impl Default for Settings {
@@ -18,6 +19,7 @@ impl Default for Settings {
         Self {
             rotate_speed:2.0,
             pan_speed: 10.0,
+            auto_pan_speed:5.0,
             zoom_speed: 1.0,
             pan_left: KeyCode::A,
             pan_right: KeyCode::D,

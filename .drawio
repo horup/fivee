@@ -44,22 +44,16 @@
                     <mxGeometry x="-420" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="36" value="implement resources like movement" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-270" y="360" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="37" value="implement pan to selected" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-130" y="285" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-270" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="38" value="improve walls such they are walls and not blocks" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="570" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-420" y="430" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="39" value="fix diagnoal moving through wall" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="640" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-420" y="500" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="42" value="implement auto select of turn holder, but only for player" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="710" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="43" value="fix moving out of bounds" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-270" y="290" width="120" height="60" as="geometry"/>
+                <mxCell id="44" value="implement token icon" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="-420" y="360" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

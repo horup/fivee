@@ -133,7 +133,7 @@ fn camera_transform_system(
         if auto_pan.alpha >= 1.0 {
             cam.auto_pan = None;
         } else {
-            auto_pan.alpha += dt * settings.pan_speed;
+            auto_pan.alpha += dt * settings.auto_pan_speed;
             let p = (auto_pan.to - auto_pan.from) * common::math::smootherstep(0.0, 1.0, auto_pan.alpha) + auto_pan.from;
             transform.translation = p;
         }
