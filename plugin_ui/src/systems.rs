@@ -422,7 +422,7 @@ fn select_my_active_token_system(round: Res<Round>, mut ui: ResMut<UI>, tokens: 
 pub fn pan_to_active_entity_system(
     mut reader: EventReader<GameEvent>,
     mut transforms: Query<&mut Transform>,
-    mut cameras: Query<(Entity, &Camera)>,
+    cameras: Query<(Entity, &Camera)>,
 ) {
     let mut pan_to = None;
     for ev in reader.iter() {
@@ -447,7 +447,9 @@ pub fn pan_to_active_entity_system(
     let mut look_at = ray_plane_intersection(ray).unwrap();
     look_at.z = 0.0;
     let v = camera_transform.translation - look_at;
-    camera_transform.translation = pan_to + v;
+
+    let new_pos = pan_to + v;
+    camera_transform.translation = new_pos;
 }
 
 pub fn add_systems(app: &mut App) {
