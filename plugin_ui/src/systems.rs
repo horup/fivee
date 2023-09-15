@@ -4,7 +4,8 @@ use bevy::{
     prelude::*,
 };
 use common::{
-    CommonAssets, Grid, Player, Round, RoundCommand, Selection, Settings, ShortLived, Token,
+    CommonAssets, GameEvent, Grid, Player, Round, RoundCommand, Selection, Settings, ShortLived,
+    Token,
 };
 
 use crate::{
@@ -418,6 +419,30 @@ fn select_my_active_token_system(round: Res<Round>, mut ui: ResMut<UI>, tokens: 
     }
 }
 
+pub fn pan_to_active_entity_system(
+    mut reader: EventReader<GameEvent>,
+    mut transforms: Query<&mut Transform>,
+    mut cameras: Query<(Entity, &Camera)>,
+) {
+    let mut pan_to = None;
+    for ev in reader.iter() {
+        match ev {
+            GameEvent::IsNowActive { entity } => {
+                if let Ok(t) = transforms.get(*entity) {
+                    pan_to = Some(t.translation);
+                }
+            }
+            _ => {}
+        }
+    }
+
+    let Some(pan_to) = pan_to else { return };
+    let camera = cameras.single();
+    let mut camera_transform = transforms.get_mut(camera.0).unwrap();
+    camera_transform.translation.x = pan_to.x;
+    camera_transform.translation.y = pan_to.y;
+}
+
 pub fn add_systems(app: &mut App) {
     app.add_systems(Startup, startup_system);
     app.add_systems(
@@ -426,6 +451,7 @@ pub fn add_systems(app: &mut App) {
             ensure_player_system,
             select_my_active_token_system,
             camera_system,
+            pan_to_active_entity_system,
             cursor_changed_system,
             grid_cursor_system,
             token_selected_system,
