@@ -439,8 +439,15 @@ pub fn pan_to_active_entity_system(
     let Some(pan_to) = pan_to else { return };
     let camera = cameras.single();
     let mut camera_transform = transforms.get_mut(camera.0).unwrap();
-    camera_transform.translation.x = pan_to.x;
-    camera_transform.translation.y = pan_to.y;
+    let ray = Ray {
+        origin: camera_transform.translation,
+        direction: camera_transform.forward(),
+    };
+
+    let mut look_at = ray_plane_intersection(ray).unwrap();
+    look_at.z = 0.0;
+    let v = camera_transform.translation - look_at;
+    camera_transform.translation = pan_to + v;
 }
 
 pub fn add_systems(app: &mut App) {
