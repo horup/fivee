@@ -482,14 +482,6 @@ fn token_faces_camera_system(mut transforms:Query<&mut Transform>, cameras:Query
             token_transform.rotate_z(PI);
         }
     }
-    /*let (_, camera_transform) = set.p1().single();
-    let camera_transform = camera_transform.clone();
-    for (_, mut transform) in set.p0().iter_mut() {
-        let v = (camera_transform.translation.truncate() - transform.translation.truncate()).normalize_or_zero();
-        if v.length() > 0.0 {
-            transform.rotation = camera_transform.rotation;
-        }
-    }*/
 }
 
 pub fn add_systems(app: &mut App) {
