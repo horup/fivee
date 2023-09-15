@@ -4,14 +4,12 @@ use common::{Round, RoundCommand, Token};
 
 fn add_remove_ai_system(mut commands: Commands, tokens: Query<(Entity, &Token)>, ais: Query<&AI>) {
     for (token_entity, token) in tokens.iter() {
-        if token.player == None {
+        if token.player.is_none() {
             if !ais.contains(token_entity) {
                 commands.entity(token_entity).insert(AI::default());
             }
-        } else {
-            if ais.contains(token_entity) {
-                commands.entity(token_entity).remove::<AI>();
-            }
+        } else if ais.contains(token_entity) {
+            commands.entity(token_entity).remove::<AI>();
         }
     }
 }

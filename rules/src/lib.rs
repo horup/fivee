@@ -147,7 +147,7 @@ pub fn get_path(token:&Token, grid:&Grid, end:IVec2) -> Vec<ReachableCell> {
     let cells = get_reachable_cells(token, grid);
     let mut current_cell = cells.get(&end);
     while let Some(cell) = current_cell {
-        vec.push(cell.clone());
+        vec.push(*cell);
         current_cell = cells.get(&cell.from);
     }
 

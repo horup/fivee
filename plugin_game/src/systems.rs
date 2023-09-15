@@ -191,8 +191,8 @@ fn finish_round_command(
         }
         common::Variant::MoveFar { who, to } => {
             if let Ok(token) = tokens.get(who) {
-                let path = rules::get_path(token, &grid, to);
-                if path.len() > 0 {
+                let path = rules::get_path(token, grid, to);
+                if !path.is_empty() {
                     for p in path.iter().rev() {
                         round.push_front_command(RoundCommand::move_to(who, p.to));
                     }
@@ -252,7 +252,7 @@ fn assign_initiative_system(mut round: ResMut<Round>, tokens:Query<(Entity, &Tok
 
     // push missing to order
     for (e, _token) in tokens.iter() {
-        if round.initiative_order.contains(&e) == false {
+        if !round.initiative_order.contains(&e) {
             round.initiative_order.push(e);
             round.has_taken_turn.insert(e, ());
         }
@@ -275,7 +275,7 @@ fn assign_active_entity_system(mut round:ResMut<Round>, _tokens:Query<(Entity, &
     if round.active_entity.is_none() {
         // no one has turn, give the turn to someone
         for e in round.initiative_order.iter() {
-            if round.has_taken_turn.contains_key(e) == false {
+            if !round.has_taken_turn.contains_key(e) {
                 ge.send(GameEvent::IsNowActive { entity: *e });
                 round.active_entity = Some(*e);
                 break;

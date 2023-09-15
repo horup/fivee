@@ -238,7 +238,7 @@ fn ray_plane_intersection(ray: Ray) -> Option<Vec3> {
         return Some(p);
     }
 
-    return None;
+    None
 }
 
 fn grid_cursor_system(
@@ -470,12 +470,12 @@ pub fn pan_to_active_entity_system(
 
 fn token_faces_camera_system(mut transforms:Query<&mut Transform>, cameras:Query<Entity, With<Camera>>, tokens:Query<Entity, With<Token>>) {
     let camera_entity = cameras.single();
-    let camera_transform = transforms.get(camera_entity).unwrap().clone();
+    let camera_transform = *transforms.get(camera_entity).unwrap();
 
     for token in tokens.iter() {
         if let Ok(mut token_transform) = transforms.get_mut(token) {
             let _v = (camera_transform.translation.truncate() - token_transform.translation.truncate()).normalize_or_zero();
-            let mut q = camera_transform.rotation.clone();
+            let mut q = camera_transform.rotation;
             q.y = 0.0;
             q.x = 0.0;
             token_transform.rotation = q;
