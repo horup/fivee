@@ -9,7 +9,7 @@ use common::{
 };
 
 use crate::{
-    GridCursorEvent, HighlightedCell, UIDebugFPS, UITurnOwnerName, Waypoint, WorldCursor, UI,
+    GridCursorEvent, HighlightedCell, UIDebugFPS, UITurnOwnerName, Waypoint, WorldCursor, UI, Cam,
 };
 
 fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
@@ -17,7 +17,7 @@ fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(5.0, 0.0, 8.0).looking_at(Vec3::new(5.0, 8.0, 0.0), Vec3::Y),
         ..default()
-    });
+    }).insert(Cam::default());
 
     // spawn debug
     let font = common_assets.font("default");
@@ -82,14 +82,14 @@ fn startup_system(mut commands: Commands, common_assets: ResMut<CommonAssets>) {
         });
 }
 
-fn camera_system(
+fn camera_transform_system(
     keys: Res<Input<KeyCode>>,
-    mut camera: Query<(&mut Camera3d, &mut Transform)>,
+    mut camera: Query<(&mut Camera3d, &mut Transform, &mut Cam)>,
     time: Res<Time>,
     mut mouse_wheel: EventReader<MouseWheel>,
     settings: Res<Settings>,
 ) {
-    let (_amera, mut transform) = camera.single_mut();
+    let (_, mut transform, mut cam) = camera.single_mut();
     let dt = time.delta_seconds();
 
     // rotate camera
@@ -129,26 +129,36 @@ fn camera_system(
         transform.translation = v;
     }
 
-    // pan camera
-    let zoom_factor = v.z / 6.0;
-    let mut v = Vec2::new(0.0, 0.0);
-    let forward = transform.forward().truncate().normalize_or_zero();
-    let side = Vec2::new(-forward.y, forward.x);
-    if keys.pressed(settings.pan_left) {
-        v += side;
-    }
-    if keys.pressed(settings.pan_right) {
-        v -= side;
-    }
-    if keys.pressed(settings.pan_up) {
-        v += forward;
-    }
-    if keys.pressed(settings.pan_down) {
-        v -= forward;
-    }
+    if let Some(auto_pan) = &mut cam.auto_pan {
+        if auto_pan.alpha >= 1.0 {
+            cam.auto_pan = None;
+        } else {
+            auto_pan.alpha += dt * settings.pan_speed;
+            let p = (auto_pan.to - auto_pan.from) * auto_pan.alpha + auto_pan.from;
+            transform.translation = p;
+        }
+    } else {
+        // manual pan camera
+        let zoom_factor = v.z / 6.0;
+        let mut v = Vec2::new(0.0, 0.0);
+        let forward = transform.forward().truncate().normalize_or_zero();
+        let side = Vec2::new(-forward.y, forward.x);
+        if keys.pressed(settings.pan_left) {
+            v += side;
+        }
+        if keys.pressed(settings.pan_right) {
+            v -= side;
+        }
+        if keys.pressed(settings.pan_up) {
+            v += forward;
+        }
+        if keys.pressed(settings.pan_down) {
+            v -= forward;
+        }
 
-    let v = v * settings.pan_speed * zoom_factor * dt;
-    transform.translation += v.extend(0.0);
+        let v = v * settings.pan_speed * zoom_factor * dt;
+        transform.translation += v.extend(0.0);
+    }
 }
 
 fn update_debug_system(
@@ -422,7 +432,7 @@ fn select_my_active_token_system(round: Res<Round>, mut ui: ResMut<UI>, tokens: 
 pub fn pan_to_active_entity_system(
     mut reader: EventReader<GameEvent>,
     mut transforms: Query<&mut Transform>,
-    cameras: Query<(Entity, &Camera)>,
+    mut cameras: Query<(Entity, &Camera, &mut Cam)>,
 ) {
     let mut pan_to = None;
     for ev in reader.iter() {
@@ -437,8 +447,9 @@ pub fn pan_to_active_entity_system(
     }
 
     let Some(pan_to) = pan_to else { return };
-    let camera = cameras.single();
+    let mut camera: (Entity, &Camera, Mut<'_, Cam>) = cameras.single_mut();
     let mut camera_transform = transforms.get_mut(camera.0).unwrap();
+
     let ray = Ray {
         origin: camera_transform.translation,
         direction: camera_transform.forward(),
@@ -447,9 +458,11 @@ pub fn pan_to_active_entity_system(
     let mut look_at = ray_plane_intersection(ray).unwrap();
     look_at.z = 0.0;
     let v = camera_transform.translation - look_at;
-
     let new_pos = pan_to + v;
-    camera_transform.translation = new_pos;
+
+    camera.2.auto_pan = Some(crate::AutoPan { to: new_pos, from: camera_transform.translation, alpha: 0.0 });
+    
+
 }
 
 pub fn add_systems(app: &mut App) {
@@ -459,7 +472,7 @@ pub fn add_systems(app: &mut App) {
         (
             ensure_player_system,
             select_my_active_token_system,
-            camera_system,
+            camera_transform_system,
             pan_to_active_entity_system,
             cursor_changed_system,
             grid_cursor_system,

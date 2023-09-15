@@ -29,3 +29,14 @@ pub struct HighlightedCell {
 pub struct Waypoint {
     pub grid_pos:IVec2,
 }
+
+#[derive(Default, Component)]
+pub struct Cam {
+    pub auto_pan:Option<AutoPan>
+}
+
+pub struct AutoPan {
+    pub to:Vec3,
+    pub from:Vec3,
+    pub alpha:f32
+}
