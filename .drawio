@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="fbY-3la6N2TdW8390JJk" name="Page-1">
-        <mxGraphModel dx="1748" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="2620" dy="899" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -47,7 +47,7 @@
                     <mxGeometry x="-270" y="360" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="37" value="implement pan to selected" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-420" y="500" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-130" y="285" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="38" value="improve walls such they are walls and not blocks" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="570" width="120" height="60" as="geometry"/>
@@ -58,7 +58,7 @@
                 <mxCell id="42" value="implement auto select of turn holder, but only for player" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-420" y="710" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="43" value="fix moving out of bounds" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="43" value="fix moving out of bounds" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-270" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>

@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use common::{CommonAssets, Grid, Round, RoundCommand, Token, Player};
+use common::{CommonAssets, Grid, Round, RoundCommand, Token, Player, GameEvent};
 use mapgen::{AreaStartingPosition, BspRooms, MapBuilder, SimpleRooms, XStart, YStart};
 use rand::{rngs::StdRng, SeedableRng};
 
@@ -191,14 +191,14 @@ fn finish_round_command(
             }
         }
         common::Variant::GiveTurn { who } => {
-            if round.active_token == Some(who) {
-                round.active_token = None;
+            if round.active_entity == Some(who) {
+                round.active_entity = None;
                 round.has_taken_turn.insert(who, ());
             }
         }
         common::Variant::EndRound {  } => {
             round.has_taken_turn.clear();
-            round.active_token = None;
+            round.active_entity = None;
             round.round_num += 1;
         },
     }
@@ -258,22 +258,23 @@ fn assign_initiative_system(mut round: ResMut<Round>, tokens:Query<(Entity, &Tok
     }
 }
 
-fn assign_turn_holder_system(mut round:ResMut<Round>, tokens:Query<(Entity, &Token)>) {
+fn assign_active_entity_system(mut round:ResMut<Round>, tokens:Query<(Entity, &Token)>, mut ge:EventWriter<GameEvent>) {
     if round.is_executing() {
         return;
     }
 
-    if round.active_token.is_none() {
+    if round.active_entity.is_none() {
         // no one has turn, give the turn to someone
         for e in round.initiative_order.iter() {
             if round.has_taken_turn.contains_key(e) == false {
-                round.active_token = Some(*e);
+                ge.send(GameEvent::IsNowActive { entity: *e });
+                round.active_entity = Some(*e);
                 break;
             }
         }
     }
 
-    if round.active_token.is_none() {
+    if round.active_entity.is_none() {
         // no one has turn, end round
         round.push_back_command(RoundCommand::end_round());
     }
@@ -282,6 +283,6 @@ fn assign_turn_holder_system(mut round:ResMut<Round>, tokens:Query<(Entity, &Tok
 
 pub fn add_systems(app:&mut App) {
     app.add_systems(Startup, startup_system);
-    app.add_systems(Update, (execute_round_command_system, assign_initiative_system, assign_turn_holder_system).chain());
+    app.add_systems(Update, (execute_round_command_system, assign_initiative_system, assign_active_entity_system).chain());
     app.add_systems(PostUpdate, on_spawn_token_system);
 }

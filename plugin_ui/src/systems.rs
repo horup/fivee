@@ -389,7 +389,7 @@ fn update_turn_owner_name_system(
 ) {
     let mut turn_owner_name = turn_owner_name.single_mut();
     turn_owner_name.sections[0].value = format!("Round {}", round.round_num);
-    if let Some(turn_owner) = round.active_token {
+    if let Some(turn_owner) = round.active_entity {
         if let Ok(turn_owner) = tokens.get(turn_owner) {
             turn_owner_name.sections[0].value = turn_owner.name.clone();
         }
@@ -407,7 +407,7 @@ fn select_my_active_token_system(round: Res<Round>, mut ui: ResMut<UI>, tokens: 
     }
 
     ui.selected_token = None;
-    let Some(active_token) = round.active_token else {
+    let Some(active_token) = round.active_entity else {
         return;
     };
     let Ok(token) = tokens.get(active_token) else {

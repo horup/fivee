@@ -21,7 +21,7 @@ fn timeout_system(mut round: ResMut<Round>, mut ais: Query<&mut AI, With<Token>>
         return;
     }
 
-    let Some(active_token) = round.active_token else {
+    let Some(active_token) = round.active_entity else {
         return;
     };
 
@@ -46,7 +46,7 @@ fn think_system(
         return;
     }
 
-    let Some(entity) = round.active_token else {
+    let Some(entity) = round.active_entity else {
         return;
     };
 

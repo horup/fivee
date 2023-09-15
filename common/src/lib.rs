@@ -13,6 +13,8 @@ mod settings;
 pub use settings::*;
 mod player;
 pub use player::*;
+mod events;
+pub use events::*;
 
 mod selection;
 pub use selection::*;
@@ -22,6 +24,7 @@ pub struct CommonPlugin;
 
 impl Plugin for CommonPlugin {
     fn build(&self, app: &mut App) {
+        events::add_events(app);
         app.insert_resource(Grid::new(0));
         app.insert_resource(CommonAssets::default());
         app.insert_resource(Round::default());
