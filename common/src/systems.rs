@@ -15,6 +15,6 @@ fn age_system(_commands:Commands, mut q:Query<&mut ShortLived>) {
     }
 }
 
-pub fn add_systems(app:&mut App) {
+pub fn build(app:&mut App) {
     app.add_systems(Last, (kill_system, age_system).chain());
 }

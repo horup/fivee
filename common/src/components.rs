@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use glam::*;
+use crate::Statblock;
 
 #[derive(Component, Default)]
 pub struct Token {
@@ -8,7 +9,8 @@ pub struct Token {
     pub grid_pos:IVec2, 
     pub name:String,
     pub player:Option<Entity>,
-    pub movement_ft:f32
+    pub movement_ft:f32,
+    pub statblock:Option<Handle<Statblock>>
 }
 
 impl Token {

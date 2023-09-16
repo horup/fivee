@@ -7,12 +7,15 @@ mod resources;
 pub use resources::*;
 use bevy::prelude::*;
 mod systems;
+mod assets;
+pub use assets::*;
 pub struct CommonPlugin;
 
 impl Plugin for CommonPlugin {
     fn build(&self, app: &mut App) {
-        events::add_events(app);
-        resources::insert_resources(app);
-        systems::add_systems(app);
+        events::build(app);
+        resources::build(app);
+        systems::build(app);
+        assets::build(app);
     }
 }
