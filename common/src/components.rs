@@ -1,13 +1,14 @@
 use bevy::prelude::*;
 use glam::*;
 
-#[derive(Component)]
+#[derive(Component, Default)]
 pub struct Token {
     pub color:Color,
     pub image:String,
     pub grid_pos:IVec2, 
     pub name:String,
-    pub player:Option<Entity>
+    pub player:Option<Entity>,
+    pub movement_ft:f32
 }
 
 impl Token {

@@ -77,6 +77,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<
             },
             image:"images/token_william.png".into(),
             player:Some(player),
+            ..Default::default()
         })
         .id();
     let _e = commands
@@ -89,6 +90,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<
             },
             image:"images/token_viktor.png".into(),
             player:Some(player),
+            ..Default::default()
         })
         .id();
 
@@ -101,7 +103,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<
             y: p.y as i32 + 2,
         },
         image:"images/token_goblin.png".into(),
-        player:None
+        ..Default::default()
     });
 
     commands.spawn(Token {
@@ -112,7 +114,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<
             y: p.y as i32 + 3,
         },
         image:"images/token_goblin.png".into(),
-        player:None
+        ..Default::default()
     });
 }
 
