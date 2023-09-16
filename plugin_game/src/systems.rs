@@ -1,9 +1,9 @@
 use bevy::prelude::*;
-use common::{CommonAssets, Grid, Round, RoundCommand, Token, Player, GameEvent};
+use common::{CommonAssets, Grid, Round, RoundCommand, Token, Player, GameEvent, Statblock};
 use mapgen::{AreaStartingPosition, BspRooms, MapBuilder, SimpleRooms, XStart, YStart};
 use rand::{rngs::StdRng, SeedableRng};
 
-fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<Round>) {
+fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<Round>, asset_server:Res<AssetServer>) {
     let mut rng: StdRng = SeedableRng::seed_from_u64(0);
     let map_size = 64;
     let mapbuffer = MapBuilder::new(map_size, map_size)
@@ -67,6 +67,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<
     let player = commands.spawn(Player {
         name: "Player One".into()
     }).id();
+
     let _e = commands
         .spawn(Token {
             name:"William".into(),
@@ -77,6 +78,7 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<
             },
             image:"images/token_william.png".into(),
             player:Some(player),
+            statblock:Some(asset_server.load("statblocks/william.statblock")),
             ..Default::default()
         })
         .id();

@@ -1,4 +1,4 @@
-use bevy::{reflect::{TypeUuid, TypePath}, asset::AssetLoader, prelude::App};
+use bevy::{reflect::{TypeUuid, TypePath}, asset::AssetLoader, prelude::{App, AddAsset}};
 
 #[derive(TypeUuid, TypePath)]
 #[uuid = "f175d5c6-4275-4e40-9105-016d4d0001c1"]
@@ -19,10 +19,10 @@ impl AssetLoader for StablockAssetLoader {
     }
 
     fn extensions(&self) -> &[&str] {
-        &[".statblock"]
+        &["statblock"]
     }
 }
 
 pub fn build(app:&mut App) {
-
+    app.init_asset_loader::<StablockAssetLoader>();
 }
