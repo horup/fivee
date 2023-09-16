@@ -15,6 +15,8 @@ mod player;
 pub use player::*;
 mod events;
 pub use events::*;
+mod resources;
+pub use resources::*;
 
 mod selection;
 pub use selection::*;
