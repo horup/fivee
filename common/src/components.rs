@@ -16,8 +16,6 @@ impl Token {
     }
 }
 
-
-
 #[derive(Default, Component)]
 pub struct ShortLived {
     pub despawn:bool
