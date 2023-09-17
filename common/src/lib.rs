@@ -9,6 +9,8 @@ use bevy::prelude::*;
 mod systems;
 mod assets;
 pub use assets::*;
+mod bundles;
+pub use bundles::*;
 pub struct CommonPlugin;
 
 impl Plugin for CommonPlugin {

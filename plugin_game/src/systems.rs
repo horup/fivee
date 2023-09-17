@@ -78,10 +78,10 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<
             },
             image:"images/token_william.png".into(),
             player:Some(player),
-            statblock:Some(asset_server.load("statblocks/william.statblock")),
             ..Default::default()
         })
         .id();
+    
     let _e = commands
         .spawn(Token {
             name:"Viktor".into(),
@@ -125,9 +125,11 @@ fn on_spawn_token_system(
     q: Query<(Entity, &Token), Added<Token>>,
     sa: Res<CommonAssets>,
     mut materials: ResMut<Assets<StandardMaterial>>,
-    asset_server:Res<AssetServer>
+    asset_server:Res<AssetServer>,
+    ass:Res<AssetServer>
 ) {
     for (e, token) in q.iter() {
+        let handle:Handle<Statblock> = ass.get_handle(&token.statblock);
         commands.entity(e).insert(PbrBundle {
             transform: Transform::from_translation(Token::pos(token.grid_pos)),
             mesh: sa.mesh("token"),
@@ -137,7 +139,7 @@ fn on_spawn_token_system(
                 ..Default::default()
             }),
             ..Default::default()
-        });
+        }).insert(handle);
     }
 }
 
