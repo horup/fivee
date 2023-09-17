@@ -1,9 +1,14 @@
 use bevy::prelude::*;
-use common::{CommonAssets, Grid, Round, RoundCommand, Token, Player, GameEvent, Statblock};
+use common::{CommonAssets, GameEvent, Grid, Player, Round, RoundCommand, Statblock, Token};
 use mapgen::{AreaStartingPosition, BspRooms, MapBuilder, SimpleRooms, XStart, YStart};
 use rand::{rngs::StdRng, SeedableRng};
 
-fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<Round>, asset_server:Res<AssetServer>) {
+fn startup_system(
+    mut commands: Commands,
+    sa: Res<CommonAssets>,
+    _round: ResMut<Round>,
+    asset_server: Res<AssetServer>,
+) {
     let mut rng: StdRng = SeedableRng::seed_from_u64(0);
     let map_size = 64;
     let mapbuffer = MapBuilder::new(map_size, map_size)
@@ -64,58 +69,61 @@ fn startup_system(mut commands: Commands, sa: Res<CommonAssets>, _round: ResMut<
 
     // spawn player one
     let p = mapbuffer.starting_point.expect("no starting point found");
-    let player = commands.spawn(Player {
-        name: "Player One".into()
-    }).id();
+    let player = commands
+        .spawn(Player {
+            name: "Player One".into(),
+        })
+        .id();
 
     let _e = commands
         .spawn(Token {
-            name:"William".into(),
+            name: "William".into(),
             color: Color::BLUE,
             grid_pos: IVec2 {
                 x: p.x as i32,
                 y: p.y as i32,
             },
-            image:"images/token_william.png".into(),
-            player:Some(player),
+            image: "token_william".into(),
+            statblock: "william".into(),
+            player: Some(player),
             ..Default::default()
         })
         .id();
-    
+
     let _e = commands
         .spawn(Token {
-            name:"Viktor".into(),
+            name: "Viktor".into(),
             color: Color::BLUE,
             grid_pos: IVec2 {
                 x: p.x as i32 + 1,
                 y: p.y as i32,
             },
-            image:"images/token_viktor.png".into(),
-            player:Some(player),
+            image: "token_viktor".into(),
+            player: Some(player),
             ..Default::default()
         })
         .id();
 
     // spawn a goblins
     commands.spawn(Token {
-        name:"Goblin 1".into(),
+        name: "Goblin 1".into(),
         color: Color::RED,
         grid_pos: IVec2 {
             x: p.x as i32 + 2,
             y: p.y as i32 + 2,
         },
-        image:"images/token_goblin.png".into(),
+        image: "token_goblin".into(),
         ..Default::default()
     });
 
     commands.spawn(Token {
-        name:"Goblin 2".into(),
+        name: "Goblin 2".into(),
         color: Color::RED,
         grid_pos: IVec2 {
             x: p.x as i32 + 4,
             y: p.y as i32 + 3,
         },
-        image:"images/token_goblin.png".into(),
+        image: "token_goblin".into(),
         ..Default::default()
     });
 }
@@ -125,21 +133,26 @@ fn on_spawn_token_system(
     q: Query<(Entity, &Token), Added<Token>>,
     sa: Res<CommonAssets>,
     mut materials: ResMut<Assets<StandardMaterial>>,
-    asset_server:Res<AssetServer>,
-    ass:Res<AssetServer>
+    asset_server: Res<AssetServer>,
+    ass: Res<AssetServer>,
 ) {
     for (e, token) in q.iter() {
-        let handle:Handle<Statblock> = ass.get_handle(&token.statblock);
-        commands.entity(e).insert(PbrBundle {
-            transform: Transform::from_translation(Token::pos(token.grid_pos)),
-            mesh: sa.mesh("token"),
-            material: materials.add(StandardMaterial {
-              //  base_color: token.color,
-                base_color_texture:Some(asset_server.load(&token.image)),
+        let handle: Handle<Statblock> =
+            ass.load(format!("statblocks/{}.statblock", token.statblock));
+        commands
+            .entity(e)
+            .insert(PbrBundle {
+                transform: Transform::from_translation(Token::pos(token.grid_pos)),
+                mesh: sa.mesh("token"),
+                material: materials.add(StandardMaterial {
+                    base_color_texture: Some(
+                        asset_server.load(format!("images/{}.png", &token.image)),
+                    ),
+                    ..Default::default()
+                }),
                 ..Default::default()
-            }),
-            ..Default::default()
-        }).insert(handle);
+            })
+            .insert(handle);
     }
 }
 
@@ -173,7 +186,7 @@ fn update_round_command(
         }
         common::Variant::MoveFar { who: _, to: _ } => {}
         common::Variant::GiveTurn { who: _ } => {}
-        common::Variant::EndRound {  } => {},
+        common::Variant::EndRound {} => {}
     }
 }
 
@@ -211,11 +224,11 @@ fn finish_round_command(
                 round.has_taken_turn.insert(who, ());
             }
         }
-        common::Variant::EndRound {  } => {
+        common::Variant::EndRound {} => {
             round.has_taken_turn.clear();
             round.active_entity = None;
             round.round_num += 1;
-        },
+        }
     }
 }
 
@@ -251,7 +264,7 @@ fn execute_round_command_system(
     }
 }
 
-fn assign_initiative_system(mut round: ResMut<Round>, tokens:Query<(Entity, &Token)>) {
+fn assign_initiative_system(mut round: ResMut<Round>, tokens: Query<(Entity, &Token)>) {
     if round.is_executing() {
         return;
     }
@@ -273,7 +286,11 @@ fn assign_initiative_system(mut round: ResMut<Round>, tokens:Query<(Entity, &Tok
     }
 }
 
-fn assign_active_entity_system(mut round:ResMut<Round>, _tokens:Query<(Entity, &Token)>, mut ge:EventWriter<GameEvent>) {
+fn assign_active_entity_system(
+    mut round: ResMut<Round>,
+    _tokens: Query<(Entity, &Token)>,
+    mut ge: EventWriter<GameEvent>,
+) {
     if round.is_executing() {
         return;
     }
@@ -295,9 +312,16 @@ fn assign_active_entity_system(mut round:ResMut<Round>, _tokens:Query<(Entity, &
     }
 }
 
-
-pub fn add_systems(app:&mut App) {
+pub fn add_systems(app: &mut App) {
     app.add_systems(Startup, startup_system);
-    app.add_systems(Update, (execute_round_command_system, assign_initiative_system, assign_active_entity_system).chain());
+    app.add_systems(
+        Update,
+        (
+            execute_round_command_system,
+            assign_initiative_system,
+            assign_active_entity_system,
+        )
+            .chain(),
+    );
     app.add_systems(PostUpdate, on_spawn_token_system);
 }
