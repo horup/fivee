@@ -1,6 +1,16 @@
+# name of the statblock
 name = "Default"
-initiative = 0
-speed = 30 # speed in feet
+
+# max number of hitpoints, 
+# if not set: the entity cannot be damaged
 hit_points = 10
+
+# initiative modifier, 
+# if not set: the entity has no initiative and does not receive a turn during a round
+initiative = 0
+
+# speed in feet
+speed = 30
+
+# number of actions that an entity can perform per turn
 actions = 1
-bonus_actions = 1

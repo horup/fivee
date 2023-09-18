@@ -1,0 +1,6 @@
+name = "Goblin"
+initiative = 0
+speed = 30
+hit_points = 7
+actions = 1
+bonus_actions = 1
