@@ -1,4 +1,6 @@
-use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, window::PresentMode, render::{RenderPlugin, settings::{WgpuSettings}}};
+use std::time::Duration;
+
+use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, window::PresentMode, render::{RenderPlugin, settings::{WgpuSettings}}, asset::ChangeWatcher};
 
 fn main() {
     App::new()
@@ -17,6 +19,9 @@ fn main() {
                     wgpu_settings: WgpuSettings {
                         ..Default::default()
                     },
+                }).set(AssetPlugin {
+                    watch_for_changes: ChangeWatcher::with_delay(Duration::from_millis(250)),
+                    ..Default::default()
                 }),
         )
         .add_plugins(FrameTimeDiagnosticsPlugin)
