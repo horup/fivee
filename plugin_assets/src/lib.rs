@@ -50,7 +50,7 @@ fn startup(
     ca.material_insert(
         "white",
         materials.add(StandardMaterial {
-            base_color: Color::WHITE,
+            base_color: Color::rgb(1.0,1.0,1.0) * 2.0,
             unlit: true,
             ..Default::default()
         }),

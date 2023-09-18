@@ -64,7 +64,7 @@ fn startup_system(
     // spawn lighting
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
-        brightness: 1.0,
+        brightness: 0.02,
     });
 
     // spawn player one
