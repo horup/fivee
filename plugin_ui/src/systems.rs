@@ -275,6 +275,7 @@ fn token_selected_system(
             }
         }
 
+        /*
         if !found {
             let selected_e = commands
                 .spawn(PbrBundle {
@@ -288,7 +289,7 @@ fn token_selected_system(
                 .insert(ShortLived::default())
                 .id();
             commands.entity(selected_token).add_child(selected_e);
-        }
+        }*/
     }
 }
 

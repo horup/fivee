@@ -64,7 +64,7 @@ fn startup_system(
     // spawn ambient lighting
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
-        brightness: 0.02,
+        brightness: 0.00,
     });
 
     // spawn player one
@@ -156,8 +156,8 @@ fn on_spawn_token_system(
                 if token.player.is_some() {
                     child_builder.spawn(PointLightBundle {
                         point_light:PointLight {
-                            intensity:100.0,
-                            radius:0.0,
+                            intensity:30.0,
+                            range:6.0,
                             shadows_enabled:true,
                             ..Default::default()
                         },

@@ -15,6 +15,7 @@ impl Plugin for PluginUI {
     fn build(&self, app: &mut App) {
         app.add_event::<GridCursorEvent>();
         app.insert_resource(UI::default());
+        app.insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)));
         add_systems(app);
     }
 }
