@@ -30,7 +30,7 @@ fn timeout_system(mut round: ResMut<Round>, mut ais: Query<&mut AI, With<Token>>
     active_ai.timeout_timer += time.delta_seconds();
 
     if active_ai.timeout_timer > 1.0 {
-        round.push_back_command(RoundCommand::give_turn(active_token));
+        round.push_back(RoundCommand::give_turn(active_token));
         active_ai.timeout_timer = 0.0;
     }
 }
@@ -57,8 +57,8 @@ fn think_system(
     };
 
     let new_pos = token.grid_pos + IVec2::new(1, 0);
-    round.push_back_command(RoundCommand::move_far(entity, new_pos));
-    round.push_back_command(RoundCommand::give_turn(entity));
+    round.push_back(RoundCommand::move_far(entity, new_pos));
+    round.push_back(RoundCommand::give_turn(entity));
 }
 
 pub fn add_systems(app: &mut App) {

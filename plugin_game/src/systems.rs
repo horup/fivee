@@ -213,7 +213,7 @@ fn finish_round_command(
                 let path = rules::get_path(token, grid, to);
                 if !path.is_empty() {
                     for p in path.iter().rev() {
-                        round.push_front_command(RoundCommand::move_to(who, p.to));
+                        round.push_front(RoundCommand::move_to(who, p.to));
                     }
                 }
             }
@@ -232,34 +232,91 @@ fn finish_round_command(
     }
 }
 
-fn execute_round_command_system(
+fn update_round_command_system(
     mut round: ResMut<Round>,
     time: Res<Time>,
-    mut tokens: Query<&mut Token>,
     mut transforms: Query<&mut Transform>,
-    mut grid: ResMut<Grid>,
+    tokens: Query<&mut Token>,
+    grid: Res<Grid>,
 ) {
-    if let Some(mut command) = round.pop_front() {
-        command.timer_elapsed_sec += time.delta_seconds();
-        command.timer_elapsed_sec = command.timer_elapsed_sec.min(command.timer);
-        update_round_command(
-            &mut command,
-            &mut round,
-            &time,
-            &mut tokens,
-            &mut transforms,
-        );
-        if command.timer_elapsed_sec >= command.timer {
-            finish_round_command(
-                command,
-                &mut round,
-                &time,
-                &mut tokens,
-                &mut transforms,
-                &mut grid,
-            );
-        } else {
-            round.push_front_command(command);
+    let Some(command) = round.front_mut() else {
+        return;
+    };
+    command.timer_elapsed_sec += time.delta_seconds();
+    command.timer_elapsed_sec = command.timer_elapsed_sec.min(command.timer);
+    match command.variant {
+        common::Variant::Nop => {}
+        common::Variant::MoveTo { who, to } => {
+            let a = command.alpha();
+            if let Ok(token) = tokens.get(who) {
+                if let Ok(mut transform) = transforms.get_mut(who) {
+                    let s = Token::pos(token.grid_pos);
+                    let e = Token::pos(to);
+                    let v = e - s;
+                    let v = v * common::math::smootherstep(0.0, 1.0, a);
+                    let mut z = 0.0;
+                    if a <= 0.5 {
+                        z = a * 2.0;
+                    } else {
+                        z = 1.0 - (a - 0.5) * 2.0;
+                    }
+                    z *= 0.2;
+                    transform.translation = s + v + Vec3::new(0.0, 0.0, z);
+                }
+            }
+        }
+        common::Variant::MoveFar { who: _, to: _ } => {}
+        common::Variant::GiveTurn { who: _ } => {}
+        common::Variant::EndRound {} => {}
+    }
+}
+
+fn finish_round_command_system(
+    mut round: ResMut<Round>,
+    mut transforms: Query<&mut Transform>,
+    mut tokens: Query<&mut Token>,
+    grid: Res<Grid>,
+) {
+    let Some(command) = round.front_mut() else {
+        return;
+    };
+    if command.timer_elapsed_sec < command.timer {
+        return;
+    }
+    let Some(command) = round.pop_front() else {
+        return;
+    };
+
+    match command.variant {
+        common::Variant::Nop => {}
+        common::Variant::MoveTo { who, to } => {
+            if let Ok(mut token) = tokens.get_mut(who) {
+                token.grid_pos = to;
+                if let Ok(mut transform) = transforms.get_mut(who) {
+                    transform.translation = Token::pos(token.grid_pos);
+                }
+            }
+        }
+        common::Variant::MoveFar { who, to } => {
+            if let Ok(token) = tokens.get(who) {
+                let path = rules::get_path(token, &grid, to);
+                if !path.is_empty() {
+                    for p in path.iter().rev() {
+                        round.push_front(RoundCommand::move_to(who, p.to));
+                    }
+                }
+            }
+        }
+        common::Variant::GiveTurn { who } => {
+            if round.active_entity == Some(who) {
+                round.active_entity = None;
+                round.has_taken_turn.insert(who, ());
+            }
+        }
+        common::Variant::EndRound {} => {
+            round.has_taken_turn.clear();
+            round.active_entity = None;
+            round.round_num += 1;
         }
     }
 }
@@ -308,7 +365,7 @@ fn assign_active_entity_system(
 
     if round.active_entity.is_none() {
         // no one has turn, end round
-        round.push_back_command(RoundCommand::end_round());
+        round.push_back(RoundCommand::end_round());
     }
 }
 
@@ -317,7 +374,8 @@ pub fn add_systems(app: &mut App) {
     app.add_systems(
         Update,
         (
-            execute_round_command_system,
+            update_round_command_system,
+            finish_round_command_system,
             assign_initiative_system,
             assign_active_entity_system,
         )

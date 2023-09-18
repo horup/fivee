@@ -254,7 +254,7 @@ fn grid_cursor_system(
         let grid_pos = ev.grid_pos;
         if ev.left_just_pressed {
             if let Some(selected_entity) = ui.selected_token {
-                round.push_front_command(RoundCommand::move_far(selected_entity, grid_pos))
+                round.push_front(RoundCommand::move_far(selected_entity, grid_pos))
             }
         }
     }
@@ -390,7 +390,7 @@ fn action_system(mut ui: ResMut<UI>, mut round: ResMut<Round>, keys: Res<Input<K
     }
     if let Some(entity) = ui.selected_token {
         if keys.just_pressed(KeyCode::Space) {
-            round.push_back_command(RoundCommand::give_turn(entity));
+            round.push_back(RoundCommand::give_turn(entity));
             ui.selected_token = None;
         }
     }

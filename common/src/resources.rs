@@ -119,11 +119,15 @@ pub struct Round {
 }
 
 impl Round {
-    pub fn push_front_command(&mut self, command: RoundCommand) {
+    pub fn front_mut(&mut self) -> Option<&mut RoundCommand> {
+        self.commands.front_mut()
+    }
+
+    pub fn push_front(&mut self, command: RoundCommand) {
         self.commands.push_front(command);
     }
 
-    pub fn push_back_command(&mut self, command: RoundCommand) {
+    pub fn push_back(&mut self, command: RoundCommand) {
         self.commands.push_back(command);
     }
 
