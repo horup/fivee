@@ -138,7 +138,7 @@ fn on_spawn_token_system(
 ) {
     for (e, token) in q.iter() {
         let handle: Handle<Statblock> =
-            ass.load(format!("statblocks/{}.statblock", token.statblock));
+            ass.load(format!("statblocks/{}.toml", token.statblock));
         commands
             .entity(e)
             .insert(PbrBundle {
@@ -340,7 +340,7 @@ fn finish_round_command_system(
                 return;
             };
 
-            token.movement_ft = statblock.movement_ft.unwrap_or_default();
+            token.movement_ft = statblock.speed.unwrap_or_default() as f32;
         }
     }
 }
