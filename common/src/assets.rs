@@ -7,9 +7,12 @@ use serde::{Deserialize, Serialize};
 #[derive(TypeUuid, TypePath, Serialize, Deserialize)]
 #[uuid = "f175d5c6-4275-4e40-9105-016d4d0001c1"]
 pub struct Statblock {
-    pub name: Option<String>,
-    pub speed: Option<u32>,
-    pub hit_points:Option<u32>
+    #[serde(default)]
+    pub name: String,
+    #[serde(default)]
+    pub speed: u32,
+    #[serde(default)]
+    pub hit_points:u32
 }
 
 #[derive(Default)]

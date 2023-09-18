@@ -340,7 +340,7 @@ fn finish_round_command_system(
                 return;
             };
 
-            token.movement_ft = statblock.speed.unwrap_or_default() as f32;
+            token.movement_ft = statblock.speed as f32;
         }
     }
 }
