@@ -185,8 +185,9 @@ fn update_round_command(
             }
         }
         common::Variant::MoveFar { who: _, to: _ } => {}
-        common::Variant::GiveTurn { who: _ } => {}
+        common::Variant::EndTurn { who: _ } => {}
         common::Variant::EndRound {} => {}
+        common::Variant::RecvTurn { who: _ } => {}
     }
 }
 
@@ -218,7 +219,7 @@ fn finish_round_command(
                 }
             }
         }
-        common::Variant::GiveTurn { who } => {
+        common::Variant::EndTurn { who } => {
             if round.active_entity == Some(who) {
                 round.active_entity = None;
                 round.has_taken_turn.insert(who, ());
@@ -229,6 +230,9 @@ fn finish_round_command(
             round.active_entity = None;
             round.round_num += 1;
         }
+        common::Variant::RecvTurn { who } => {
+            round.active_entity = Some(who);
+        }
     }
 }
 
@@ -237,7 +241,6 @@ fn update_round_command_system(
     time: Res<Time>,
     mut transforms: Query<&mut Transform>,
     tokens: Query<&mut Token>,
-    grid: Res<Grid>,
 ) {
     let Some(command) = round.front_mut() else {
         return;
@@ -266,16 +269,18 @@ fn update_round_command_system(
             }
         }
         common::Variant::MoveFar { who: _, to: _ } => {}
-        common::Variant::GiveTurn { who: _ } => {}
+        common::Variant::EndTurn { who: _ } => {}
         common::Variant::EndRound {} => {}
+        common::Variant::RecvTurn { who } => {}
     }
 }
 
 fn finish_round_command_system(
     mut round: ResMut<Round>,
-    mut transforms: Query<&mut Transform>,
     mut tokens: Query<&mut Token>,
+    mut statblock_handles: Query<&Handle<Statblock>>,
     grid: Res<Grid>,
+    mut statblocks: Res<Assets<Statblock>>,
 ) {
     let Some(command) = round.front_mut() else {
         return;
@@ -290,12 +295,17 @@ fn finish_round_command_system(
     match command.variant {
         common::Variant::Nop => {}
         common::Variant::MoveTo { who, to } => {
-            if let Ok(mut token) = tokens.get_mut(who) {
-                token.grid_pos = to;
-                if let Ok(mut transform) = transforms.get_mut(who) {
-                    transform.translation = Token::pos(token.grid_pos);
-                }
-            }
+            let Ok(mut token) = tokens.get_mut(who) else {
+                return;
+            };
+            let path = rules::get_path(&token, &grid, to);
+            let Some(rc) = path.first() else { return };
+            let m = token.movement_ft - rc.cost_ft;
+            if m < 0.0 {
+                return;
+            };
+            token.movement_ft = m;
+            token.grid_pos = to;
         }
         common::Variant::MoveFar { who, to } => {
             if let Ok(token) = tokens.get(who) {
@@ -307,16 +317,30 @@ fn finish_round_command_system(
                 }
             }
         }
-        common::Variant::GiveTurn { who } => {
-            if round.active_entity == Some(who) {
+        common::Variant::EndTurn { who: turn_giver } => {
+            if round.active_entity == Some(turn_giver) {
                 round.active_entity = None;
-                round.has_taken_turn.insert(who, ());
+                round.has_taken_turn.insert(turn_giver, ());
             }
         }
         common::Variant::EndRound {} => {
             round.has_taken_turn.clear();
             round.active_entity = None;
             round.round_num += 1;
+        }
+        common::Variant::RecvTurn { who } => {
+            let Ok(mut token) = tokens.get_mut(who) else {
+                return;
+            };
+            round.active_entity = Some(who);
+            let Ok(statblock_handle) = statblock_handles.get(who) else {
+                return;
+            };
+            let Some(statblock) = statblocks.get(statblock_handle) else {
+                return;
+            };
+
+            token.movement_ft = statblock.movement_ft.unwrap_or_default();
         }
     }
 }
@@ -351,21 +375,22 @@ fn assign_active_entity_system(
     if round.is_executing() {
         return;
     }
+    if round.active_entity.is_some() {
+        return;
+    };
 
-    if round.active_entity.is_none() {
-        // no one has turn, give the turn to someone
-        for e in round.initiative_order.iter() {
-            if !round.has_taken_turn.contains_key(e) {
-                ge.send(GameEvent::IsNowActive { entity: *e });
-                round.active_entity = Some(*e);
-                break;
-            }
+    // no one has the turn, give it to someone or end the round
+    let mut next = None;
+    for e in round.initiative_order.iter() {
+        if !round.has_taken_turn.contains_key(e) {
+            ge.send(GameEvent::NextActiveEntity { entity: *e });
+            next = Some(*e);
+            break;
         }
     }
-
-    if round.active_entity.is_none() {
-        // no one has turn, end round
-        round.push_back(RoundCommand::end_round());
+    match next {
+        Some(next) => round.push_front(RoundCommand::recv_turn(next)),
+        None => round.push_back(RoundCommand::end_round()),
     }
 }
 

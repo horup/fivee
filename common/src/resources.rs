@@ -37,7 +37,8 @@ pub enum Variant {
     Nop,
     MoveTo { who: Entity, to: IVec2 },
     MoveFar { who: Entity, to: IVec2 },
-    GiveTurn { who: Entity },
+    EndTurn { who: Entity },
+    RecvTurn { who: Entity },
     EndRound {},
 }
 
@@ -79,9 +80,17 @@ impl RoundCommand {
         }
     }
 
-    pub fn give_turn(who: Entity) -> Self {
+    pub fn end_turn(who: Entity) -> Self {
         Self {
-            variant: Variant::GiveTurn { who },
+            variant: Variant::EndTurn { who },
+            timer: 0.25,
+            ..Default::default()
+        }
+    }
+
+    pub fn recv_turn(who: Entity) -> Self {
+        Self {
+            variant: Variant::RecvTurn { who },
             timer: 0.25,
             ..Default::default()
         }

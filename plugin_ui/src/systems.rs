@@ -390,7 +390,7 @@ fn action_system(mut ui: ResMut<UI>, mut round: ResMut<Round>, keys: Res<Input<K
     }
     if let Some(entity) = ui.selected_token {
         if keys.just_pressed(KeyCode::Space) {
-            round.push_back(RoundCommand::give_turn(entity));
+            round.push_back(RoundCommand::end_turn(entity));
             ui.selected_token = None;
         }
     }
@@ -440,7 +440,7 @@ pub fn pan_to_active_entity_system(
     let mut pan_to = None;
     for ev in reader.iter() {
         match ev {
-            GameEvent::IsNowActive { entity } => {
+            GameEvent::NextActiveEntity { entity } => {
                 if let Ok(t) = transforms.get(*entity) {
                     pan_to = Some(t.translation);
                 }

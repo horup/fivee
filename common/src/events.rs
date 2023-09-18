@@ -2,7 +2,7 @@ use bevy::prelude::{App, Entity, Event};
 
 #[derive(Event)]
 pub enum GameEvent {
-    IsNowActive { entity: Entity },
+    NextActiveEntity { entity: Entity },
 }
 
 pub fn build(app: &mut App) {

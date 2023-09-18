@@ -137,7 +137,7 @@ fn move_from(pos:IVec2, map:&mut HashMap<IVec2, ReachableCell>, grid:&Grid, move
 pub fn get_reachable_cells(token:&Token, grid:&Grid) -> HashMap<IVec2, ReachableCell> {
     let mut map = HashMap::new();
     let start_pos = token.grid_pos;
-    move_from(token.grid_pos, &mut map, grid, 30.0, 0.0);
+    move_from(token.grid_pos, &mut map, grid, token.movement_ft, 0.0);
     map.remove(&start_pos);
     map
 }
