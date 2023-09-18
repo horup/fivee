@@ -61,7 +61,7 @@ fn startup_system(
 
     commands.insert_resource(grid);
 
-    // spawn lighting
+    // spawn ambient lighting
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 0.02,
@@ -137,8 +137,7 @@ fn on_spawn_token_system(
     ass: Res<AssetServer>,
 ) {
     for (e, token) in q.iter() {
-        let handle: Handle<Statblock> =
-            ass.load(format!("statblocks/{}.toml", token.statblock));
+        let handle: Handle<Statblock> = ass.load(format!("statblocks/{}.toml", token.statblock));
         commands
             .entity(e)
             .insert(PbrBundle {
@@ -152,7 +151,21 @@ fn on_spawn_token_system(
                 }),
                 ..Default::default()
             })
-            .insert(handle);
+            .insert(handle)
+            .with_children(|child_builder| {
+                if token.player.is_some() {
+                    child_builder.spawn(PointLightBundle {
+                        point_light:PointLight {
+                            intensity:100.0,
+                            radius:0.0,
+                            shadows_enabled:true,
+                            ..Default::default()
+                        },
+                        transform:Transform::from_translation(Vec3::new(0.0, 0.0, 1.0)),
+                        ..Default::default()
+                    });
+                }
+            });
     }
 }
 
