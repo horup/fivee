@@ -278,7 +278,7 @@ fn token_selected_system(
         if !found {
             let selected_e = commands
                 .spawn(PbrBundle {
-                    mesh: ca.mesh("selector"),
+                    mesh: ca.mesh("selection"),
                     material: ca.material("white"),
                     ..Default::default()
                 })

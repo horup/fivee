@@ -70,4 +70,5 @@ fn startup(
     ca.mesh_insert("cube", asset_server.load("meshes/cube.gltf#Mesh0/Primitive0"));
     ca.mesh_insert("token", asset_server.load("meshes/token.gltf#Mesh0/Primitive0"));
     ca.mesh_insert("selector", asset_server.load("meshes/selector.gltf#Mesh0/Primitive0"));
+    ca.mesh_insert("selection", asset_server.load("meshes/selection.gltf#Mesh0/Primitive0"));
 }
